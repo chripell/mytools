@@ -66,8 +66,8 @@ mode). I tested on Arch Linux with kernel 4.11.9. You can use
 
 ## Converting from 2 fisheye images to an equiangular panorama
 
-For now I use the (Windows application from their
-site)[http://dokicam.com/downloads/] under Wine32. I know, shame,
+For now I use the [Windows application from their
+site](http://dokicam.com/downloads/0 under Wine32. I know, shame,
 shame, shame. It shouldn't be difficult to use *Hugin* to do the
 remapping, I just haven't had time to look into it yet.
 
