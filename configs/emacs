@@ -1,0 +1,211 @@
+(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                         ("melpa" . "https://melpa.org/packages/")))
+
+(package-initialize)
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
+(setq my-package-list '(android-mode apiwrap async auto-complete browse-kill-ring+ browse-kill-ring company concurrent ctable dash deferred elpy epc epl find-file-in-project flycheck flycheck-kotlin flymake-easy flymake-go flymake-python-pyflakes gh ghub+ ghub git-commit go-autocomplete go-guru go-mode highlight-indentation ht ivy jedi jedi-core kotlin-mode logito magit magit-gh-pulls magithub magit-popup markdown-mode markdown-preview-mode marshal menu-bar+ pcache pkg-info popup python-environment pyvenv s second-sel websocket with-editor yasnippet))
+(mapc #'package-install my-package-list)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ac-auto-show-menu 0.8)
+ '(ac-auto-start nil)
+ '(ac-set-trigger-key "TAB")
+ '(ac-trigger-key "TAB")
+ '(auto-coding-regexp-alist
+   (quote
+    (("^BABYL OPTIONS:[ 	]*-\\*-[ 	]*rmail[ 	]*-\\*-" . no-conversion)
+     ("<meta\\b[^>]*\\bcontent=\"text/html; charset=UTF-8\"[^>]*>" . utf-8)
+     ("<\\?xml\\b[^>]*\\bencoding=\"utf-8\"[^>]*\\?>" . utf-8))))
+ '(case-fold-search t)
+ '(column-number-mode t)
+ '(current-language-environment "English")
+ '(global-font-lock-mode t nil (font-lock))
+ '(gofmt-command "goimports")
+ '(indicate-buffer-boundaries (quote ((t . right) (top . left))))
+ '(indicate-empty-lines t)
+ '(inhibit-startup-screen t)
+ '(jde-jdk-registry (quote (("1.6" . "/opt/java"))))
+ '(mouse-yank-at-point t)
+ '(package-selected-packages
+   (quote
+    (magit magit-gh-pulls magithub elpy jedi flymake-python-pyflakes kotlin-mode flycheck-kotlin go-guru go-mode go-autocomplete flymake-go second-sel menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode)))
+ '(save-place t nil (saveplace))
+ '(scroll-bar-mode (quote right))
+ '(set-mark-command-repeat-pop t)
+ '(show-paren-mode t)
+ '(size-indication-mode t)
+ '(tool-bar-mode nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+(setq auto-mode-alist (cons '("\.lua$" . lua-mode) auto-mode-alist))
+(autoload 'lua-mode "lua-mode" "Lua editing mode." t)
+
+(add-hook 'lua-mode-hook 'turn-on-font-lock)
+
+
+;(autoload 'python-mode "python-mode" "Python Mode." t)
+;(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
+;(add-to-list 'interpreter-mode-alist '("python" . python-mode))
+
+;(add-hook 'python-mode-hook
+;	  (lambda ()
+;	    (set (make-variable-buffer-local 'beginning-of-defun-function)
+;		 'py-beginning-of-def-or-class)
+;	    (setq outline-regexp "def\\|class ")))
+
+(if (fboundp 'normal-top-level-add-subdirs-to-load-path)
+    (let* ((my-lisp-dir "~/elisp/")
+	   (default-directory my-lisp-dir))
+      (setq load-path (cons my-lisp-dir load-path))
+      (normal-top-level-add-subdirs-to-load-path)))
+
+(setq-default ispell-program-name "aspell")
+
+(autoload 'bhl-mode "bhl" "BHL Mode" t)
+     (add-to-list 'auto-mode-alist '("\\.bhl$" . bhl-mode))
+
+(put 'narrow-to-region 'disabled nil)
+
+(set-default-coding-systems 'utf-8)
+
+(add-to-list 'auto-mode-alist '("\\.js\\'" . javascript-mode))
+(autoload 'javascript-mode "javascript" nil t)
+
+;; wanderlust
+(autoload 'wl "wl" "Wanderlust" t)
+(autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
+(autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
+
+;; IMAP
+(setq elmo-imap4-default-server "imap.gmail.com")
+(setq elmo-imap4-default-user "chripell@gmail.com")
+(setq elmo-imap4-default-authenticate-type 'clear)
+(setq elmo-imap4-default-port '993)
+(setq elmo-imap4-default-stream-type 'ssl)
+
+(setq elmo-imap4-use-modified-utf7 t)
+
+;; SMTP
+(setq wl-smtp-connection-type 'starttls)
+(setq wl-smtp-posting-port 587)
+(setq wl-smtp-authenticate-type "plain")
+(setq wl-smtp-posting-user "chripell")
+(setq wl-smtp-posting-server "smtp.gmail.com")
+(setq wl-local-domain "gmail.com")
+
+(setq wl-default-folder "%inbox")
+(setq wl-default-spec "%")
+(setq wl-draft-folder "%[Gmail]/Drafts") ; Gmail IMAP
+(setq wl-trash-folder "%[Gmail]/Trash")
+
+(setq wl-folder-check-async t)
+
+(setq elmo-imap4-use-modified-utf7 t)
+
+(autoload 'wl-user-agent-compose "wl-draft" nil t)
+(if (boundp 'mail-user-agent)
+    (setq mail-user-agent 'wl-user-agent))
+(if (fboundp 'define-mail-user-agent)
+    (define-mail-user-agent
+      'wl-user-agent
+      'wl-user-agent-compose
+      'wl-draft-send
+      'wl-draft-kill
+      'mail-send-hook))
+
+;; mailcrypt
+;; (require 'mailcrypt)
+;; (add-hook 'wl-summary-mode-hook 'mc-install-read-mode)
+;; (add-hook 'wl-mail-setup-hook 'mc-install-write-mode)
+
+;; (defun mc-wl-verify-signature ()
+;;   (interactive)
+;;   (save-window-excursion
+;;     (wl-summary-jump-to-current-message)
+;;     (mc-verify)))
+
+;; (defun mc-wl-decrypt-message ()
+;;   (interactive)
+;;   (save-window-excursion
+;;     (wl-summary-jump-to-current-message)
+;;     (let ((inhibit-read-only t))
+;;       (mc-decrypt))))
+
+;; (eval-after-load "mailcrypt"
+;;   '(setq mc-modes-alist
+;;        (append
+;;         (quote
+;;          ((wl-draft-mode (encrypt . mc-encrypt-message)
+;;             (sign . mc-sign-message))
+;;           (wl-summary-mode (decrypt . mc-wl-decrypt-message)
+;;             (verify . mc-wl-verify-signature))))
+;;         mc-modes-alist)))
+
+(defun bf-pretty-print-xml-region (begin end)
+  "Pretty format XML markup in region. You need to have nxml-mode
+http://www.emacswiki.org/cgi-bin/wiki/NxmlMode installed to do
+this.  The function inserts linebreaks to separate tags that have
+nothing but whitespace between them.  It then indents the markup
+by using nxml's indentation rules."
+  (interactive "r")
+  (save-excursion
+      (nxml-mode)
+      (goto-char begin)
+      (while (search-forward-regexp "\>[ \\t]*\<" nil t) 
+        (backward-char) (insert "\n"))
+      (indent-region begin end))
+    (message "Ah, much better!"))
+
+;;(add-to-list 'load-path "/home/chri/git/go-mode.el")
+;;;(require 'go-mode-autoloads)
+
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/ecb")
+(require 'ecb)
+
+(autoload 'python-mode "python-mode.el" "Python mode." t)
+(setq auto-mode-alist (append '(("/.*\.py\'" . python-mode)) auto-mode-alist))
+
+;; arduino-mode
+(require 'cl)
+(autoload 'arduino-mode "arduino-mode" "Arduino editing mode." t)
+(add-to-list 'auto-mode-alist '("\.ino$" . arduino-mode))
+
+; gofmt on save
+(add-hook 'before-save-hook #'gofmt-before-save)
+
+
+(global-set-key (kbd "C-M-y")               'secondary-dwim)
+(define-key esc-map "y"                     'yank-pop-commands)
+(define-key isearch-mode-map (kbd "C-M-y")  'isearch-yank-secondary)
+(global-set-key (kbd "C-x C-M-SPC")         'set-secondary-start)
+(global-set-key (kbd "C-x C-M-<return>")    'secondary-save-then-kill)
+
+(setq package-enable-at-startup nil)
+(package-initialize)
+(eval-after-load "menu-bar" '(require 'menu-bar+))
+
+(require 'go-guru)
+
+(defun my-go-mode-hook ()
+  (add-hook 'before-save-hook 'gofmt-before-save) ; gofmt before every save
+  ; Godef jump key binding                                                      
+  (local-set-key (kbd "M-.") 'godef-jump)
+  (local-set-key (kbd "M-*") 'pop-tag-mark)
+  (go-guru-hl-identifier-mode)
+  (auto-complete-mode 1)
+  )
+(add-hook 'go-mode-hook 'my-go-mode-hook)
+
+(elpy-enable)
+(elpy-use-ipython)
