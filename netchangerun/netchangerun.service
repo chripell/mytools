@@ -1,0 +1,11 @@
+[Unit]
+Description=Update DDNS on new address change
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/netchangerun --url='http://freedns.afraid.org/dynamic/update.php?_TOKEN_&address={{}}' --iface=enp2s0 --ipv6
+WatchdogSec=30s
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

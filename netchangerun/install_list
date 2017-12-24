@@ -1,0 +1,2 @@
+netchangerun,/usr/bin
+netchangerun.service,/usr/lib/systemd/system/
