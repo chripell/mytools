@@ -15,8 +15,8 @@
  ;; If there is more than one, they won't work right.
  '(ac-auto-show-menu 0.8)
  '(ac-auto-start nil)
- '(ac-set-trigger-key "TAB")
- '(ac-trigger-key "TAB")
+ '(ac-set-trigger-key "<backtab>")
+ '(ac-trigger-key "<backtab>")
  '(auto-coding-regexp-alist
    (quote
     (("^BABYL OPTIONS:[ 	]*-\\*-[ 	]*rmail[ 	]*-\\*-" . no-conversion)
@@ -169,6 +169,9 @@ by using nxml's indentation rules."
 
 ;;(add-to-list 'load-path "/home/chri/git/go-mode.el")
 ;;;(require 'go-mode-autoloads)
+
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/ecb")
+(require 'ecb)
 
 (autoload 'python-mode "python-mode.el" "Python mode." t)
 (setq auto-mode-alist (append '(("/.*\.py\'" . python-mode)) auto-mode-alist))
