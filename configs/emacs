@@ -5,7 +5,13 @@
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-(setq my-package-list '(android-mode apiwrap async auto-complete browse-kill-ring+ browse-kill-ring company concurrent ctable dash deferred elpy epc epl find-file-in-project flycheck flycheck-kotlin flymake-easy flymake-go flymake-python-pyflakes gh ghub+ ghub git-commit go-autocomplete go-guru go-mode highlight-indentation ht ivy jedi jedi-core kotlin-mode logito magit magit-gh-pulls magithub magit-popup markdown-mode markdown-preview-mode marshal menu-bar+ pcache pkg-info popup python-environment pyvenv s second-sel websocket with-editor yasnippet))
+(setq my-package-list '(android-mode apiwrap async auto-complete browse-kill-ring+ browse-kill-ring company concurrent
+                        ctable dash deferred elpy epc epl find-file-in-project flycheck flycheck-kotlin flymake-easy
+                        flymake-go flymake-python-pyflakes gh ghub+ ghub git-commit go-autocomplete go-guru go-mode
+                        highlight-indentation ht ivy jedi jedi-core kotlin-mode logito magit magit-gh-pulls magithub
+                        magit-popup markdown-mode markdown-preview-mode marshal menu-bar+ pcache pkg-info popup
+                        python-environment pyvenv s websocket with-editor yasnippet sr-speedbar windmove
+                        ido flx-ido ido-completing-read+ smex projectile projectile-speedbar go-projectile))
 (mapc #'package-install my-package-list)
 
 (custom-set-variables
@@ -25,6 +31,9 @@
  '(case-fold-search t)
  '(column-number-mode t)
  '(current-language-environment "English")
+ '(ecb-layout-window-sizes nil)
+ '(ecb-options-version "2.40")
+ '(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
  '(global-font-lock-mode t nil (font-lock))
  '(gofmt-command "goimports")
  '(indicate-buffer-boundaries (quote ((t . right) (top . left))))
@@ -34,12 +43,13 @@
  '(mouse-yank-at-point t)
  '(package-selected-packages
    (quote
-    (magit magit-gh-pulls magithub elpy jedi flymake-python-pyflakes kotlin-mode flycheck-kotlin go-guru go-mode go-autocomplete flymake-go second-sel menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode)))
+    (magit magit-gh-pulls magithub elpy jedi flymake-python-pyflakes kotlin-mode flycheck-kotlin go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode)))
  '(save-place t nil (saveplace))
  '(scroll-bar-mode (quote right))
  '(set-mark-command-repeat-pop t)
  '(show-paren-mode t)
  '(size-indication-mode t)
+ '(speedbar-show-unknown-files t)
  '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -209,3 +219,62 @@ by using nxml's indentation rules."
 
 (elpy-enable)
 (elpy-use-ipython)
+
+(require 'sr-speedbar)
+
+(defun sr-speedbar-open-and-select ()
+ "Opens and selects SR Speedbar"
+ (interactive) (sr-speedbar-open) (sr-speedbar-select-window))
+
+(global-set-key (kbd "<f12>") 'sr-speedbar-open-and-select)
+(global-set-key (kbd "<S-f12>") 'sr-speedbar-close)
+
+(require 'windmove)
+
+(defun ignore-error-wrapper (fn)
+  "Funtion return new function that ignore errors.
+   The function wraps a function with `ignore-errors' macro."
+  (lexical-let ((fn fn))
+    (lambda ()
+      (interactive)
+      (ignore-errors
+        (funcall fn)))))
+
+(global-set-key [S-left] (ignore-error-wrapper 'windmove-left))
+(global-set-key [S-right] (ignore-error-wrapper 'windmove-right))
+(global-set-key [S-up] (ignore-error-wrapper 'windmove-up))
+(global-set-key [S-down] (ignore-error-wrapper 'windmove-down))
+
+(require 'flx-ido)
+(ido-mode 1)
+(ido-everywhere 1)
+(flx-ido-mode 1)
+(require 'ido-completing-read+)
+(ido-ubiquitous-mode 1)
+(require 'smex)
+(smex-initialize)
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+(setq magit-completing-read-function 'magit-ido-completing-read)
+(require 'icomplete)
+(icomplete-mode 1)
+(setq ido-enable-flex-matching t)
+(setq ido-use-faces nil)
+
+;; (setq visible-bell 1)
+(setq ring-bell-function
+      (lambda ()
+        (let ((orig-fg (face-foreground 'mode-line)))
+          (set-face-foreground 'mode-line "#F2804F")
+          (run-with-idle-timer 0.1 nil
+                               (lambda (fg) (set-face-foreground 'mode-line fg))
+                               orig-fg))))
+
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+(projectile-mode)
+(require 'projectile-speedbar)
+;; (require 'go-projectile)
+;; (global-set-key (kbd "C-<f12>") 'projectile-speedbar-open-current-buffer-in-tree)
+
