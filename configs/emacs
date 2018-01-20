@@ -44,6 +44,7 @@
  '(package-selected-packages
    (quote
     (magit magit-gh-pulls magithub elpy jedi flymake-python-pyflakes kotlin-mode flycheck-kotlin go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode)))
+ '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(save-place t nil (saveplace))
  '(scroll-bar-mode (quote right))
  '(set-mark-command-repeat-pop t)
@@ -194,13 +195,6 @@ by using nxml's indentation rules."
 ; gofmt on save
 (add-hook 'before-save-hook #'gofmt-before-save)
 
-
-(global-set-key (kbd "C-M-y")               'secondary-dwim)
-(define-key esc-map "y"                     'yank-pop-commands)
-(define-key isearch-mode-map (kbd "C-M-y")  'isearch-yank-secondary)
-(global-set-key (kbd "C-x C-M-SPC")         'set-secondary-start)
-(global-set-key (kbd "C-x C-M-<return>")    'secondary-save-then-kill)
-
 (setq package-enable-at-startup nil)
 (package-initialize)
 (eval-after-load "menu-bar" '(require 'menu-bar+))
@@ -278,3 +272,7 @@ by using nxml's indentation rules."
 ;; (require 'go-projectile)
 ;; (global-set-key (kbd "C-<f12>") 'projectile-speedbar-open-current-buffer-in-tree)
 
+(add-hook 'text-mode-hook 'flyspell-mode)
+(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+
+(add-hook 'after-init-hook #'global-flycheck-mode)
