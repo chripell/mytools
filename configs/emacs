@@ -11,7 +11,8 @@
                         highlight-indentation ht ivy jedi jedi-core kotlin-mode logito magit magit-gh-pulls magithub
                         magit-popup markdown-mode markdown-preview-mode marshal menu-bar+ pcache pkg-info popup
                         python-environment pyvenv s websocket with-editor yasnippet sr-speedbar windmove
-                        ido flx-ido ido-completing-read+ smex projectile projectile-speedbar go-projectile))
+                        ido flx-ido ido-completing-read+ smex projectile projectile-speedbar go-projectile
+			simpleclip lua-mode company-lua flymake-lua))
 (mapc #'package-install my-package-list)
 
 (custom-set-variables
@@ -43,7 +44,7 @@
  '(mouse-yank-at-point t)
  '(package-selected-packages
    (quote
-    (magit magit-gh-pulls magithub elpy jedi flymake-python-pyflakes kotlin-mode flycheck-kotlin go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode)))
+    (company-lua flymake-lua lua-mode magit magit-gh-pulls magithub elpy jedi flymake-python-pyflakes kotlin-mode flycheck-kotlin go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode)))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(save-place t nil (saveplace))
  '(scroll-bar-mode (quote right))
@@ -265,7 +266,8 @@ by using nxml's indentation rules."
                                (lambda (fg) (set-face-foreground 'mode-line fg))
                                orig-fg))))
 
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
+;; No need to start maximized with awesome
+;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 (projectile-mode)
 (require 'projectile-speedbar)
@@ -276,3 +278,15 @@ by using nxml's indentation rules."
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 
 (add-hook 'after-init-hook #'global-flycheck-mode)
+
+(global-set-key "\C-cy" 'browse-kill-ring)
+
+(require 'simpleclip)
+(simpleclip-mode 1)
+
+(setq rcirc-server-alist
+      '(("irc.freenode.net" :port 6697 :encryption tls)))
+
+(setq rcirc-default-nick "chripell")
+
+(load "~/elisp/pass")
