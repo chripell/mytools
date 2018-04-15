@@ -50,12 +50,12 @@ def nikWine(name, ndir = None, exe = None):
   if exe is None:
     exe = name  
   return [name,
-          ["wine", os.path.expanduser("~/win32/drive_c/Program Files/Google/Nik Collection/" +
-                                      os.path.join(ndir, exe + ".exe"))],
+          ["wine", os.path.expanduser("~/win64/drive_c/Program Files/Google/Nik Collection/" +
+                                      os.path.join(ndir, ndir + " (64-Bit)", exe + ".exe"))],
           "tif"]
 
 def nikWineHDRHook(tmpfile, ext):
-  shutil.move(os.path.expandvars("$HOME/win32/drive_c/users/$USER/My Documents/" + TEMP_FNAME + "_HDR." + ext),
+  shutil.move(os.path.expandvars("$HOME/win64/drive_c/users/$USER/My Documents/" + TEMP_FNAME + "_HDR." + ext),
               tmpfile)
 
 #program list function (globals are evil)
