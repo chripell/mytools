@@ -1,0 +1,5 @@
+*~
+netchangerun
+*.tar.xz
+pkg/*
+src/*

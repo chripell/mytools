@@ -1,0 +1,27 @@
+# Maintainer: Christian Pellegrin <chripell@fsfe.org>
+pkgname=netchangerun
+pkgver=20171224
+pkgrel=1
+pkgdesc="Update DDNS on new address change"
+arch=('i686' 'x86_64')
+url="https://github.com/chripell/mytools/netchangerun"
+license=('Apache')
+
+build() {
+    cd ..
+    go build
+}
+
+package() {
+    cd ..
+    while read l; do
+	FROM=`echo $l | cut -d \, -f 1`
+	TO=`echo $l | cut -d \, -f 2`
+	mkdir -p $pkgdir/$TO
+	cp -a $FROM $pkgdir/$TO
+    done < install_list
+}
+
+pkgver() {
+    date '+%Y%m%d'
+}
