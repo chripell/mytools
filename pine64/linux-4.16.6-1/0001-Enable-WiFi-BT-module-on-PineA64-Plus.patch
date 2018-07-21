@@ -1,0 +1,78 @@
+From 872438df033c6b8eb0f9230ec76875aba0bbb738 Mon Sep 17 00:00:00 2001
+From: Christian Pellegrin <chri@evolware.org>
+Date: Sat, 21 Jul 2018 08:37:09 +0100
+Subject: [PATCH] Enable WiFi/BT module on PineA64 Plus.
+
+---
+ .../dts/allwinner/sun50i-a64-pine64-plus.dts  | 51 +++++++++++++++++++
+ 1 file changed, 51 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+index 24f1aac366d6..96764d293e4e 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+@@ -46,6 +46,12 @@
+ 	model = "Pine64+";
+ 	compatible = "pine64,pine64-plus", "allwinner,sun50i-a64";
+ 
++
++	wifi_pwrseq: wifi_pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
++	};
++
+ 	/* TODO: Camera, touchscreen, etc. */
+ };
+ 
+@@ -63,3 +69,48 @@
+ 		reg = <1>;
+ 	};
+ };
++
++&uart1 {
++       status = "okay";
++};
++
++&reg_dc1sw {
++       regulator-always-on;
++};
++
++&reg_dldo4 {
++       regulator-always-on;
++};
++
++&reg_eldo1 {
++       regulator-always-on;
++};
++
++/*
++ * dagli schemi:
++ * PL2/S-UART-TX == WL-PMU-EN
++ * PL3/S-UART-RX == WL-WAKE-AP
++ * PL5/S-JTAG-CK == BT-WAKE-AP
++ * PL4/S-JTAG-MS == BT-RST-N
++ * PL6/S-JTAG-DO == AP-WAKE-BT
++ * AP-CK32KO
++ */
++
++&mmc1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc1_pins>;
++	vmmc-supply = <&reg_dldo4>;
++	vqmmc-supply = <&reg_eldo1>;
++	mmc-pwrseq = <&wifi_pwrseq>;
++	bus-width = <4>;
++	non-removable;
++	status = "okay";
++
++	rtl8723bs: wifi@1 {
++		reg = <1>;
++		interrupt-parent = <&r_pio>;
++		interrupts = <0 3 IRQ_TYPE_LEVEL_LOW>; /* PL3 */
++		interrupt-names = "host-wake";
++	};
++};
++
+-- 
+2.18.0
+
