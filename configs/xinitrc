@@ -3,6 +3,7 @@ setxkbmap -layout 'us(intl)'
 xmodmap ~/.Xmodmap
 /usr/bin/dispwin -I /home/chri/icc/24EB23.icm
 #startxfce4
+udiskie --tray --no-automount &
 awesome -c /home/chri/.config/awesome/rc.lua
 
 
