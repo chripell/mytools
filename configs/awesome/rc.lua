@@ -21,6 +21,17 @@ require("awful.hotkeys_popup.keys")
 -- PulseAudio
 local pulse = require("pulseaudio_widget")
 
+-- Power
+local power = require("power_widget")
+-- override the GUI client.
+-- power.gui_client = "xfce4-power-manager"
+-- override the critical battery percentage
+power.critical_percentage = 18
+power:init()
+
+--Calenar for textclock:
+local calendar = require("calendar")
+
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -130,6 +141,7 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 -- {{{ Wibar
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
+calendar:register(mytextclock)
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -229,8 +241,9 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             -- mykeyboardlayout,
-            pulse,
             wibox.widget.systray(),
+            power,
+            pulse,
             mytextclock,
             s.mylayoutbox,
         },
