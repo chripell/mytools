@@ -1,0 +1,37 @@
+#
+# ~/.bashrc
+#
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+. /usr/share/bash-completion/bash_completion
+
+alias ls='ls --color=auto'
+alias psc='ps xawf -eo pid,user,cgroup,args'
+PS1='[\u@\h \W]\$ '
+
+export EDITOR=ed
+
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
+
+export PATH=$PATH:/mnt/scratch/android/android-sdk-linux/tools:/mnt/scratch/android/android-sdk-linux/platform-tools
+
+export WINEPREFIX=$HOME/win64
+export WINEARCH=win64
+
+export PATH=$PATH:$HOME/.local/bin
+
+printf "\e[?2004l"
+
+if ! pgrep -u "$USER" ssh-agent > /dev/null; then
+    ssh-agent > ~/.ssh-agent-thing
+fi
+if [[ "$SSH_AGENT_PID" == "" ]]; then
+    eval "$(<~/.ssh-agent-thing)"
+fi
+
+if [[ -n "`which luarocks 2>/dev/null`" ]]; then
+    eval `luarocks path --bin`
+fi
