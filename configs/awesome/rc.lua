@@ -18,6 +18,9 @@ local cyclefocus = require('cyclefocus')
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
+-- PulseAudio
+local pulse = require("pulseaudio_widget")
+
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -225,7 +228,8 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            mykeyboardlayout,
+            -- mykeyboardlayout,
+            pulse,
             wibox.widget.systray(),
             mytextclock,
             s.mylayoutbox,
@@ -252,6 +256,20 @@ globalkeys = gears.table.join(
               {description = "view next", group = "tag"}),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore,
               {description = "go back", group = "tag"}),
+
+    -- Brightness
+    awful.key({ }, "XF86MonBrightnessDown", function ()
+        awful.util.spawn("xbacklight -dec 15") end),
+    awful.key({ }, "XF86MonBrightnessUp", function ()
+        awful.util.spawn("xbacklight -inc 15") end),
+    -- Audio
+    awful.key({ }, "XF86AudioRaiseVolume", pulse.volume_up),
+    awful.key({ }, "XF86AudioLowerVolume", pulse.volume_down),
+    awful.key({ }, "XF86AudioMute",  pulse.toggle_muted),
+    -- Microphone
+    awful.key({"Shift"}, "XF86AudioRaiseVolume", pulse.volume_up_mic),
+    awful.key({"Shift"}, "XF86AudioLowerVolume", pulse.volume_down_mic),
+    -- awful.key({ }, "XF86MicMute",  pulse.toggle_muted_mic),
 
     awful.key({ modkey,           }, "j",
         function ()
@@ -371,8 +389,8 @@ clientkeys = gears.table.join(
               {description = "toggle floating", group = "client"}),
     awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end,
               {description = "move to master", group = "client"}),
-    -- awful.key({ modkey,           }, "o",      function (c) c:move_to_screen()               end,
-    --          {description = "move to screen", group = "client"}),
+    awful.key({ modkey,           }, "o",      function (c) c:move_to_screen()               end,
+              {description = "move to screen", group = "client"}),
     awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end,
               {description = "toggle keep on top", group = "client"}),
     awful.key({ modkey,           }, "n",
