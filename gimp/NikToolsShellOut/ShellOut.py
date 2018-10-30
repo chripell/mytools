@@ -175,21 +175,39 @@ def plugin_main(image, drawable, visible, command):
   pdb.gimp_image_undo_group_end(image)
   gimp.displays_flush()
 
+def register1(name, menu, opt, fun):
+  register(
+    name,
+    "Call an external program",
+    "Call an external program",
+    "Rob Antonishen",
+    "Copyright 2011 Rob Antonishen",
+    "2011",
+    "<Image>/Script-Fu/ShellOut" + menu,
+    "RGB*, GRAY*", 
+    opt,
+    [],
+    fun,
+  )
 
-register(
-        "python_fu_shellout",
-        "Call an external program",
-        "Call an external program",
-        "Rob Antonishen",
-        "Copyright 2011 Rob Antonishen",
-        "2011",
-        "<Image>/Script-Fu/ShellOut...",
-        "RGB*, GRAY*", 
-        [ (PF_RADIO, "visible", "Layer:", 1, (("new from visible", 1),("current layer",0))),
-          (PF_OPTION,"command",("Program:"),0,listcommands())
-        ],
-        [],
-        plugin_main,
-        )
+register1(
+  "python_fu_shellout",
+  "...",
+  [ (PF_RADIO, "visible", "Layer:", 1, (("new from visible", 1),("current layer",0))),
+    (PF_OPTION,"command",("Program:"),0,listcommands())]   ,
+  plugin_main)
+
+register1("python_fu_shell_color",
+          " Color Efex", [],
+          lambda image, drawable: plugin_main(image, drawable, 0, 1))
+register1("python_fu_shell_dfine",
+          " Dfine", [],
+          lambda image, drawable: plugin_main(image, drawable, 0, 2))
+register1("python_fu_shell_sharpen",
+          " Sharpener", [],
+          lambda image, drawable: plugin_main(image, drawable, 0, 5))
+register1("python_fu_shell_viveza",
+          " Viveza", [],
+          lambda image, drawable: plugin_main(image, drawable, 0, 7))
 
 main()
