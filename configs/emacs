@@ -1,18 +1,14 @@
-(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                         ("melpa" . "https://melpa.org/packages/")))
+;;; problems to connect go GNU ELPA
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			 ("gnu" . "https://elpa.gnu.org/packages/")))
 
 (package-initialize)
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-(setq my-package-list '(android-mode apiwrap async auto-complete browse-kill-ring+ browse-kill-ring company concurrent
-                        ctable dash deferred elpy epc epl find-file-in-project flycheck flycheck-kotlin flymake-easy
-                        flymake-go flymake-python-pyflakes gh ghub+ ghub git-commit go-autocomplete go-guru go-mode
-                        highlight-indentation ht ivy jedi jedi-core kotlin-mode logito magit magit-gh-pulls magithub
-                        magit-popup markdown-mode markdown-preview-mode marshal menu-bar+ pcache pkg-info popup
-                        python-environment pyvenv s websocket with-editor yasnippet sr-speedbar windmove
-                        ido flx-ido ido-completing-read+ smex projectile projectile-speedbar go-projectile
-			simpleclip lua-mode company-lua flymake-lua))
+(setq my-package-list '(dap-mode lsp-ui company-lsp lsp-mode eglot helm-lsp flycheck-yamllint flymake-yaml yaml-imenu flycheck-mypy company-lua flymake-lua magit-gh-pulls elpy jedi flymake-python-pyflakes kotlin-mode flycheck-kotlin go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode))
 (mapc #'package-install my-package-list)
 
 (custom-set-variables
@@ -35,16 +31,20 @@
  '(ecb-layout-window-sizes nil)
  '(ecb-options-version "2.40")
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
+ '(eldoc-echo-area-use-multiline-p t)
+ '(eldoc-minor-mode-string nil)
+ '(elpy-eldoc-show-current-function nil)
  '(global-font-lock-mode t nil (font-lock))
  '(gofmt-command "goimports")
  '(indicate-buffer-boundaries (quote ((t . right) (top . left))))
  '(indicate-empty-lines t)
  '(inhibit-startup-screen t)
  '(jde-jdk-registry (quote (("1.6" . "/opt/java"))))
+ '(lsp-ui-sideline-enable nil)
  '(mouse-yank-at-point t)
  '(package-selected-packages
    (quote
-    (company-lua flymake-lua lua-mode magit magit-gh-pulls magithub elpy jedi flymake-python-pyflakes kotlin-mode flycheck-kotlin go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode)))
+    (dap-mode lsp-ui company-lsp eglot helm-lsp lsp-mode flycheck-yamllint flymake-yaml yaml-imenu flycheck-mypy company-lua flymake-lua magit-gh-pulls elpy jedi flymake-python-pyflakes kotlin-mode flycheck-kotlin go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode)))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(save-place t nil (saveplace))
  '(scroll-bar-mode (quote right))
@@ -213,7 +213,12 @@ by using nxml's indentation rules."
 (add-hook 'go-mode-hook 'my-go-mode-hook)
 
 (elpy-enable)
-(elpy-use-ipython)
+;; deprecated: (elpy-use-ipython)
+(setq python-shell-interpreter "jupyter"
+      python-shell-interpreter-args "console --simple-prompt"
+      python-shell-prompt-detect-failure-warning nil)
+(add-to-list 'python-shell-completion-native-disabled-interpreters
+             "jupyter")
 
 (require 'sr-speedbar)
 
@@ -290,3 +295,24 @@ by using nxml's indentation rules."
 (setq rcirc-default-nick "chripell")
 
 (load "~/elisp/pass")
+
+(defun flymake-mypy-init ()
+  "Init mypy."
+  (let* ((temp-file (flymake-init-create-temp-buffer-copy
+                     'flymake-create-temp-inplace))
+         (local-file (file-relative-name
+                      temp-file
+                      (file-name-directory buffer-file-name))))
+    (list "mypy" (list local-file))))
+(when (load "flymake" t)
+  (add-to-list 'flymake-allowed-file-name-masks '("\\.py\\'" flymake-mypy-init))
+  )
+
+;;; lsp mode
+(require 'lsp-mode)
+(add-hook 'prog-mode-hook #'lsp)
+
+;;; dap debugger
+(dap-mode 1)
+(dap-ui-mode 1)
+(require 'dap-go)
