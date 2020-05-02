@@ -265,8 +265,12 @@ globalkeys = gears.table.join(
               {description="show help", group="awesome"}),
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev,
               {description = "view previous", group = "tag"}),
+    awful.key({ "Control", "Mod1",  }, "Left",   awful.tag.viewprev,
+              {description = "view previous", group = "tag"}),
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext,
               {description = "view next", group = "tag"}),
+    awful.key({ "Control", "Mod1",  }, "Right",   awful.tag.viewnext,
+              {description = "view previous", group = "tag"}),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore,
               {description = "go back", group = "tag"}),
 
@@ -290,7 +294,19 @@ globalkeys = gears.table.join(
         end,
         {description = "focus next by index", group = "client"}
     ),
+    awful.key({ "Control", "Mod1",}, "Up",
+        function ()
+            awful.client.focus.byidx( 1)
+        end,
+        {description = "focus next by index", group = "client"}
+    ),
     awful.key({ modkey,           }, "k",
+        function ()
+            awful.client.focus.byidx(-1)
+        end,
+        {description = "focus previous by index", group = "client"}
+    ),
+    awful.key({ "Control", "Mod1",}, "Down",
         function ()
             awful.client.focus.byidx(-1)
         end,
@@ -330,6 +346,9 @@ globalkeys = gears.table.join(
 	  cyclefocus.cycle({modifier="Super_R"})
        end,
        {description = "cycle back", group = "client"}),
+    -- Dismiss all notification
+    awful.key({ modkey, }, "`", naughty.destroy_all_notifications,
+    {description = "clear notifications", group = "awesome"}),
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
               {description = "open a terminal", group = "launcher"}),
