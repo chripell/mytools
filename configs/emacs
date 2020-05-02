@@ -1,15 +1,23 @@
-;;; problems to connect go GNU ELPA
-(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+;;; .emacs --- chripell's chaotic dot emacs file.
+;;; Commentary:
 
+;;; Code:
+
+;; Default packaging.
+;; problems to connect go GNU ELPA.
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
 			 ("gnu" . "https://elpa.gnu.org/packages/")))
-
 (package-initialize)
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-(setq my-package-list '(dap-mode lsp-ui company-lsp lsp-mode eglot helm-lsp flycheck-yamllint flymake-yaml yaml-imenu flycheck-mypy company-lua flymake-lua magit-gh-pulls elpy jedi flymake-python-pyflakes kotlin-mode flycheck-kotlin go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode))
-(mapc #'package-install my-package-list)
+;; Add ~/elisp/ to directories path.
+(if (fboundp 'normal-top-level-add-subdirs-to-load-path)
+    (let* ((my-lisp-dir "~/elisp/")
+	   (default-directory my-lisp-dir))
+      (setq load-path (cons my-lisp-dir load-path))
+      (normal-top-level-add-subdirs-to-load-path)))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -44,7 +52,7 @@
  '(mouse-yank-at-point t)
  '(package-selected-packages
    (quote
-    (dap-mode lsp-ui company-lsp eglot helm-lsp lsp-mode flycheck-yamllint flymake-yaml yaml-imenu flycheck-mypy company-lua flymake-lua magit-gh-pulls elpy jedi flymake-python-pyflakes kotlin-mode flycheck-kotlin go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode)))
+    (wanderlust go-projectile iedit bpftrace-mode dap-mode company-lsp eglot lsp-mode flycheck-yamllint flymake-yaml yaml-imenu flycheck-mypy company-lua flymake-lua magit-gh-pulls elpy flymake-python-pyflakes go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode)))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(save-place t nil (saveplace))
  '(scroll-bar-mode (quote right))
@@ -60,54 +68,38 @@
  ;; If there is more than one, they won't work right.
  )
 
+;; Make sure selected packages are installed (cross-systems).
+(package-install-selected-packages)
+
+;; Enable Lua mode.
 (setq auto-mode-alist (cons '("\.lua$" . lua-mode) auto-mode-alist))
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
-
 (add-hook 'lua-mode-hook 'turn-on-font-lock)
 
-
-;(autoload 'python-mode "python-mode" "Python Mode." t)
-;(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
-;(add-to-list 'interpreter-mode-alist '("python" . python-mode))
-
-;(add-hook 'python-mode-hook
-;	  (lambda ()
-;	    (set (make-variable-buffer-local 'beginning-of-defun-function)
-;		 'py-beginning-of-def-or-class)
-;	    (setq outline-regexp "def\\|class ")))
-
-(if (fboundp 'normal-top-level-add-subdirs-to-load-path)
-    (let* ((my-lisp-dir "~/elisp/")
-	   (default-directory my-lisp-dir))
-      (setq load-path (cons my-lisp-dir load-path))
-      (normal-top-level-add-subdirs-to-load-path)))
-
+;; Use aspell for spell checking.
 (setq-default ispell-program-name "aspell")
 
-(autoload 'bhl-mode "bhl" "BHL Mode" t)
-     (add-to-list 'auto-mode-alist '("\\.bhl$" . bhl-mode))
-
+;; I am not scarred by narrow to region. ;-)
 (put 'narrow-to-region 'disabled nil)
 
+;; UTF-8 all the way!
 (set-default-coding-systems 'utf-8)
 
+;; Enable Javascript mode.
 (add-to-list 'auto-mode-alist '("\\.js\\'" . javascript-mode))
 (autoload 'javascript-mode "javascript" nil t)
 
-;; wanderlust
+;; wanderlust email client.
 (autoload 'wl "wl" "Wanderlust" t)
 (autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
 (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
-
 ;; IMAP
 (setq elmo-imap4-default-server "imap.gmail.com")
 (setq elmo-imap4-default-user "chripell@gmail.com")
 (setq elmo-imap4-default-authenticate-type 'clear)
 (setq elmo-imap4-default-port '993)
 (setq elmo-imap4-default-stream-type 'ssl)
-
 (setq elmo-imap4-use-modified-utf7 t)
-
 ;; SMTP
 (setq wl-smtp-connection-type 'starttls)
 (setq wl-smtp-posting-port 587)
@@ -115,16 +107,11 @@
 (setq wl-smtp-posting-user "chripell")
 (setq wl-smtp-posting-server "smtp.gmail.com")
 (setq wl-local-domain "gmail.com")
-
 (setq wl-default-folder "%inbox")
 (setq wl-default-spec "%")
 (setq wl-draft-folder "%[Gmail]/Drafts") ; Gmail IMAP
 (setq wl-trash-folder "%[Gmail]/Trash")
-
 (setq wl-folder-check-async t)
-
-(setq elmo-imap4-use-modified-utf7 t)
-
 (autoload 'wl-user-agent-compose "wl-draft" nil t)
 (if (boundp 'mail-user-agent)
     (setq mail-user-agent 'wl-user-agent))
@@ -135,25 +122,37 @@
       'wl-draft-send
       'wl-draft-kill
       'mail-send-hook))
+(setq wl-from "Christian Pellegrin <chripell@gmail.com>"
+      ;; All system folders (draft, trash, spam, etc) are placed in the
+      ;; [Gmail]-folder, except inbox. "%" means it's an IMAP-folder
+      wl-default-folder "%inbox"
+      wl-draft-folder   "%[Gmail]/Drafts"
+      wl-trash-folder   "%[Gmail]/Trash"
+      ;; The below is not necessary when you send mail through Gmail's SMTP server,
+      ;; see https://support.google.com/mail/answer/78892?hl=en&rd=1
+      ;; wl-fcc            "%[Gmail]/Sent"
 
+      ;; Mark sent messages as read (sent messages get sent back to you and
+      ;; placed in the folder specified by wl-fcc)
+      wl-fcc-force-as-read    t
+
+      ;; For auto-completing foldernames
+      wl-default-spec "%")
 ;; mailcrypt
 ;; (require 'mailcrypt)
 ;; (add-hook 'wl-summary-mode-hook 'mc-install-read-mode)
 ;; (add-hook 'wl-mail-setup-hook 'mc-install-write-mode)
-
 ;; (defun mc-wl-verify-signature ()
 ;;   (interactive)
 ;;   (save-window-excursion
 ;;     (wl-summary-jump-to-current-message)
 ;;     (mc-verify)))
-
 ;; (defun mc-wl-decrypt-message ()
 ;;   (interactive)
 ;;   (save-window-excursion
 ;;     (wl-summary-jump-to-current-message)
 ;;     (let ((inhibit-read-only t))
 ;;       (mc-decrypt))))
-
 ;; (eval-after-load "mailcrypt"
 ;;   '(setq mc-modes-alist
 ;;        (append
@@ -164,47 +163,23 @@
 ;;             (verify . mc-wl-verify-signature))))
 ;;         mc-modes-alist)))
 
-(defun bf-pretty-print-xml-region (begin end)
-  "Pretty format XML markup in region. You need to have nxml-mode
-http://www.emacswiki.org/cgi-bin/wiki/NxmlMode installed to do
-this.  The function inserts linebreaks to separate tags that have
-nothing but whitespace between them.  It then indents the markup
-by using nxml's indentation rules."
-  (interactive "r")
-  (save-excursion
-      (nxml-mode)
-      (goto-char begin)
-      (while (search-forward-regexp "\>[ \\t]*\<" nil t) 
-        (backward-char) (insert "\n"))
-      (indent-region begin end))
-    (message "Ah, much better!"))
-
-;;(add-to-list 'load-path "/home/chri/git/go-mode.el")
-;;;(require 'go-mode-autoloads)
-
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/ecb")
-(require 'ecb)
-
+;; Enable Python mode.
 (autoload 'python-mode "python-mode.el" "Python mode." t)
 (setq auto-mode-alist (append '(("/.*\.py\'" . python-mode)) auto-mode-alist))
+;; Enable elpy.
+(elpy-enable)
+;; Enable MyPy
+(eval-after-load 'flymake '(require 'flymake-mypy))
 
-;; arduino-mode
-(require 'cl)
-(autoload 'arduino-mode "arduino-mode" "Arduino editing mode." t)
-(add-to-list 'auto-mode-alist '("\.ino$" . arduino-mode))
-
-; gofmt on save
-(add-hook 'before-save-hook #'gofmt-before-save)
-
-(setq package-enable-at-startup nil)
-(package-initialize)
+;; Nicer menu bar.
 (eval-after-load "menu-bar" '(require 'menu-bar+))
 
+;; Load Go guru.
 (require 'go-guru)
-
+;; Run gofmt on save, Change some keybindings for Go.
 (defun my-go-mode-hook ()
-  (add-hook 'before-save-hook 'gofmt-before-save) ; gofmt before every save
-  ; Godef jump key binding                                                      
+  "Hook for Go mode."
+  (add-hook 'before-save-hook 'gofmt-before-save)
   (local-set-key (kbd "M-.") 'godef-jump)
   (local-set-key (kbd "M-*") 'pop-tag-mark)
   (go-guru-hl-identifier-mode)
@@ -212,39 +187,30 @@ by using nxml's indentation rules."
   )
 (add-hook 'go-mode-hook 'my-go-mode-hook)
 
-(elpy-enable)
-;; deprecated: (elpy-use-ipython)
-(setq python-shell-interpreter "jupyter"
-      python-shell-interpreter-args "console --simple-prompt"
-      python-shell-prompt-detect-failure-warning nil)
-(add-to-list 'python-shell-completion-native-disabled-interpreters
-             "jupyter")
-
+;; Sppedbar stuff, on F12 open, S-F12 close.
 (require 'sr-speedbar)
-
 (defun sr-speedbar-open-and-select ()
- "Opens and selects SR Speedbar"
+ "Opens and select SR Speedbar."
  (interactive) (sr-speedbar-open) (sr-speedbar-select-window))
 
-(global-set-key (kbd "<f12>") 'sr-speedbar-open-and-select)
-(global-set-key (kbd "<S-f12>") 'sr-speedbar-close)
-
+;; Shift + arrows move point between windows..
+(require 'cl)
 (require 'windmove)
-
+;; The next macro ignores error if there is no windows on the left.
 (defun ignore-error-wrapper (fn)
-  "Funtion return new function that ignore errors.
-   The function wraps a function with `ignore-errors' macro."
+  "Function return new function that ignore errors.
+The function wraps a function FN with `ignore-errors' macro."
   (lexical-let ((fn fn))
     (lambda ()
       (interactive)
       (ignore-errors
         (funcall fn)))))
-
 (global-set-key [S-left] (ignore-error-wrapper 'windmove-left))
 (global-set-key [S-right] (ignore-error-wrapper 'windmove-right))
 (global-set-key [S-up] (ignore-error-wrapper 'windmove-up))
 (global-set-key [S-down] (ignore-error-wrapper 'windmove-down))
 
+;; IDO for fancy M-X and friends completion.
 (require 'flx-ido)
 (ido-mode 1)
 (ido-everywhere 1)
@@ -262,7 +228,7 @@ by using nxml's indentation rules."
 (setq ido-enable-flex-matching t)
 (setq ido-use-faces nil)
 
-;; (setq visible-bell 1)
+;; Sound is annoying, just flash the screen on error.
 (setq ring-bell-function
       (lambda ()
         (let ((orig-fg (face-foreground 'mode-line)))
@@ -271,48 +237,67 @@ by using nxml's indentation rules."
                                (lambda (fg) (set-face-foreground 'mode-line fg))
                                orig-fg))))
 
-;; No need to start maximized with awesome
-;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
-
+;; Enable projectile mode.
 (projectile-mode)
 (require 'projectile-speedbar)
-;; (require 'go-projectile)
-;; (global-set-key (kbd "C-<f12>") 'projectile-speedbar-open-current-buffer-in-tree)
 
+;; Enable spelling everywhere.
 (add-hook 'text-mode-hook 'flyspell-mode)
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
-
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
+;; C-c y shows the content of the kill ring.
 (global-set-key "\C-cy" 'browse-kill-ring)
 
+;; Move to/from *clipboard*:
+;; S-Inset Paste
+;; C-Insert Copy
+;; S-Delete Cut
 (require 'simpleclip)
 (simpleclip-mode 1)
 
+;; rcirc IRC client setup.
 (setq rcirc-server-alist
       '(("irc.freenode.net" :port 6697 :encryption tls)))
-
 (setq rcirc-default-nick "chripell")
-
 (load "~/elisp/pass")
 
-(defun flymake-mypy-init ()
-  "Init mypy."
-  (let* ((temp-file (flymake-init-create-temp-buffer-copy
-                     'flymake-create-temp-inplace))
-         (local-file (file-relative-name
-                      temp-file
-                      (file-name-directory buffer-file-name))))
-    (list "mypy" (list local-file))))
-(when (load "flymake" t)
-  (add-to-list 'flymake-allowed-file-name-masks '("\\.py\\'" flymake-mypy-init))
-  )
-
-;;; lsp mode
+;;; lsp mode everywhere!
 (require 'lsp-mode)
 (add-hook 'prog-mode-hook #'lsp)
 
-;;; dap debugger
+;;; Enable Debugger Adapter Mode.
 (dap-mode 1)
 (dap-ui-mode 1)
 (require 'dap-go)
+
+;;; Enable bpftrace mode.
+(require 'bpftrace-mode)
+
+;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
+(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+;; ## end of OPAM user-setup addition for emacs / base ## keep this line
+
+;; insertion of argument to go functions and such
+(require 'yasnippet)
+(setq yas-snippet-dirs
+      '("~/git/yasnippet-snippets/snippets"))
+(yas-global-mode 1)
+
+;; My personalized shortcuts:
+(global-set-key [f5] 'compile)
+(global-set-key (kbd "<f12>") 'sr-speedbar-open-and-select)
+(global-set-key (kbd "<S-f12>") 'sr-speedbar-close)
+(global-set-key [kp-left] 'backward-sexp)
+(global-set-key [kp-right] 'forward-sexp)
+(global-set-key [kp-up] 'backward-up-list)
+(global-set-key [kp-down] 'down-list)
+(global-set-key [kp-prior] 'beginning-of-defun)
+(global-set-key [kp-next] 'end-of-defun)
+(global-set-key [kp-begin] 'beginning-of-buffer)
+(global-set-key [kp-end] 'end-of-buffer)
+(global-set-key [kp-insert] 'set-mark-command)
+(global-set-key [kp-delete] 'pop-global-mark)
+
+(provide '.emacs)
+;;; .emacs ends here
