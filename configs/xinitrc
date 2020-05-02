@@ -1,9 +1,10 @@
+pulsemixer  --get-volume --id 0
 xdg_menu --format awesome --root-menu /etc/xdg/menus/arch-applications.menu >~/.config/awesome/archmenu.lua
 setxkbmap -layout 'us(intl)'
 xmodmap ~/.Xmodmap
 /usr/bin/dispwin -I /home/chri/icc/24EB23.icm
 #startxfce4
 udiskie --tray --no-automount &
+/usr/bin/roccateventhandler &
 awesome -c /home/chri/.config/awesome/rc.lua
-
 
