@@ -8,13 +8,15 @@
 . /usr/share/bash-completion/bash_completion
 
 alias ls='ls --color=auto'
-alias psc='ps xawf -eo pid,user,cgroup,args'
+alias psc='ps xawf -eo pid,user,cgname:50,args'
+alias mc=". /usr/lib/mc/mc-wrapper.sh"
 PS1='[\u@\h \W]\$ '
 
 export EDITOR=ed
 
 export GOPATH=$HOME/go
-export PATH=$PATH:$GOPATH/bin
+export PATH=$GOPATH/bin:$PATH
+export GO111MODULE=on
 
 export PATH=$PATH:/mnt/scratch/android/android-sdk-linux/tools:/mnt/scratch/android/android-sdk-linux/platform-tools
 
@@ -35,3 +37,19 @@ fi
 if [[ -n "`which luarocks 2>/dev/null`" ]]; then
     eval `luarocks path --bin`
 fi
+
+export WORKON_HOME=~/python-virtual-environments
+source /usr/bin/virtualenvwrapper_lazy.sh
+
+# https://www.virtualbox.org/ticket/13653
+CR_RENDER_FORCE_PRESENT_MAIN_THREAD=0
+
+# for mypy
+export MYPYPATH=/usr/lib/python3.8/site-packages/
+
+# TAB with variable does what is supposed to do
+shopt -s direxpand
+
+# bcc tools
+export PATH=$PATH:/usr/share/bcc/tools
+export MANPATH=$MANPATH:/usr/share/bcc/man
