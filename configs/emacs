@@ -42,6 +42,8 @@
  '(eldoc-echo-area-use-multiline-p t)
  '(eldoc-minor-mode-string nil)
  '(elpy-eldoc-show-current-function nil)
+ '(flycheck-posframe-error-prefix "!! ")
+ '(flycheck-posframe-warning-prefix "! ")
  '(global-font-lock-mode t nil (font-lock))
  '(gofmt-command "goimports")
  '(indicate-buffer-boundaries (quote ((t . right) (top . left))))
@@ -269,6 +271,9 @@ The function wraps a function FN with `ignore-errors' macro."
 ;;; Enable Debugger Adapter Mode.
 (dap-mode 1)
 (dap-ui-mode 1)
+(dap-tooltip-mode 1)
+(tooltip-mode 1)
+(dap-ui-controls-mode 1)
 (require 'dap-go)
 
 ;;; Enable bpftrace mode.
@@ -283,6 +288,24 @@ The function wraps a function FN with `ignore-errors' macro."
 (setq yas-snippet-dirs
       '("~/git/yasnippet-snippets/snippets"))
 (yas-global-mode 1)
+
+;; posframe to show suggestions.
+(require 'ivy-posframe)
+;; display at `ivy-posframe-style'
+(setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display)))
+;; (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-center)))
+;; (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-window-center)))
+;; (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-bottom-left)))
+;; (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-window-bottom-left)))
+;; (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-top-center)))
+(ivy-posframe-mode 1)
+(require 'company-posframe)
+(company-posframe-mode 1)
+(with-eval-after-load 'flycheck
+  (require 'flycheck-posframe)
+  (flycheck-posframe-configure-pretty-defaults)
+  (add-hook 'flycheck-mode-hook #'flycheck-posframe-mode))
+(helm-posframe-enable)
 
 ;; My personalized shortcuts:
 (global-set-key [f5] 'compile)
