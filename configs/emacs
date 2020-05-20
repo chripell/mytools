@@ -335,5 +335,8 @@ The function wraps a function FN with `ignore-errors' macro."
 (global-set-key [kp-insert] 'set-mark-command)
 (global-set-key [kp-delete] 'pop-global-mark)
 
+;; Default font
+(setq default-frame-alist '((font . "Source Code Pro-12")))
+
 (provide '.emacs)
 ;;; .emacs ends here
