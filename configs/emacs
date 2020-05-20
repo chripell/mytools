@@ -54,7 +54,7 @@
  '(mouse-yank-at-point t)
  '(package-selected-packages
    (quote
-    (wanderlust go-projectile iedit bpftrace-mode dap-mode company-lsp eglot lsp-mode flycheck-yamllint flymake-yaml yaml-imenu flycheck-mypy company-lua flymake-lua magit-gh-pulls elpy flymake-python-pyflakes go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode)))
+    (ws-butler wanderlust go-projectile iedit bpftrace-mode dap-mode company-lsp eglot lsp-mode flycheck-yamllint flymake-yaml yaml-imenu flycheck-mypy company-lua flymake-lua magit-gh-pulls elpy flymake-python-pyflakes go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode)))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(save-place t nil (saveplace))
  '(scroll-bar-mode (quote right))
@@ -304,8 +304,21 @@ The function wraps a function FN with `ignore-errors' macro."
 (with-eval-after-load 'flycheck
   (require 'flycheck-posframe)
   (flycheck-posframe-configure-pretty-defaults)
+  (custom-set-variables
+   '(flycheck-posframe-error-prefix "!! ")
+   '(flycheck-posframe-warning-prefix "! "))
   (add-hook 'flycheck-mode-hook #'flycheck-posframe-mode))
 (helm-posframe-enable)
+
+;; ws_butler for unobtrusively delete  whitespace
+(require 'ws-butler)
+(ws-butler-global-mode)
+
+;; customize company mode, no delay and active everywhere
+(add-hook 'after-init-hook 'global-company-mode)
+(setq company-idle-delay 0)
+(setq company-minimum-prefix-length 1)
+(setq company-selection-wrap-around t)
 
 ;; My personalized shortcuts:
 (global-set-key [f5] 'compile)
