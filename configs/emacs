@@ -54,7 +54,7 @@
  '(mouse-yank-at-point t)
  '(package-selected-packages
    (quote
-    (ws-butler wanderlust go-projectile iedit bpftrace-mode dap-mode company-lsp eglot lsp-mode flycheck-yamllint flymake-yaml yaml-imenu flycheck-mypy company-lua flymake-lua magit-gh-pulls elpy flymake-python-pyflakes go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode)))
+    (forge company-coq proof-general ws-butler wanderlust go-projectile iedit bpftrace-mode dap-mode company-lsp eglot lsp-mode flycheck-yamllint flymake-yaml yaml-imenu flycheck-mypy company-lua flymake-lua magit-gh-pulls elpy flymake-python-pyflakes go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode)))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(save-place t nil (saveplace))
  '(scroll-bar-mode (quote right))
@@ -337,6 +337,27 @@ The function wraps a function FN with `ignore-errors' macro."
 
 ;; Default font
 (setq default-frame-alist '((font . "Source Code Pro-12")))
+
+;; Proof General
+;; from: https://endlessparentheses.com/proof-general-configuration-for-the-coq-software-foundations-tutorial.html
+;; No splash screen.
+(setq proof-splash-seen t)
+;; Hybrid mode is by far the best.
+(setq proof-three-window-mode-policy 'hybrid)
+;;; I don't know who wants to evaluate comments
+;;; one-by-one, but I don't.
+(setq proof-script-fly-past-comments t)
+(with-eval-after-load 'coq
+  ;; The most common command by far. Having a 3(!)
+  ;; keys long sequence for this command is just a
+  ;; crime.
+  (define-key coq-mode-map "\M-n"
+    #'proof-assert-next-command-interactive)
+  (define-key coq-mode-map "\M-p"
+    #'proof-undo-last-successful-command))
+(when (fboundp 'company-coq-initialize)
+  (add-hook 'coq-mode-hook #'company-coq-initialize))
+;; End of Proof General
 
 (provide '.emacs)
 ;;; .emacs ends here
