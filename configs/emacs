@@ -54,8 +54,10 @@
  '(mouse-yank-at-point t)
  '(package-selected-packages
    (quote
-    (forge company-coq proof-general ws-butler wanderlust go-projectile iedit bpftrace-mode dap-mode company-lsp eglot lsp-mode flycheck-yamllint flymake-yaml yaml-imenu flycheck-mypy company-lua flymake-lua magit-gh-pulls elpy flymake-python-pyflakes go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode)))
+    (rustic cargo rust-mode toml-mode forge company-coq proof-general ws-butler wanderlust go-projectile iedit bpftrace-mode company-lsp lsp-mode flycheck-yamllint flymake-yaml yaml-imenu flycheck-mypy company-lua flymake-lua magit-gh-pulls elpy flymake-python-pyflakes go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode)))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
+ '(rustic-display-spinner nil)
+ '(rustic-format-trigger (quote on-save))
  '(save-place t nil (saveplace))
  '(scroll-bar-mode (quote right))
  '(set-mark-command-repeat-pop t)
@@ -269,12 +271,13 @@ The function wraps a function FN with `ignore-errors' macro."
 (add-hook 'prog-mode-hook #'lsp)
 
 ;;; Enable Debugger Adapter Mode.
-(dap-mode 1)
-(dap-ui-mode 1)
-(dap-tooltip-mode 1)
-(tooltip-mode 1)
-(dap-ui-controls-mode 1)
-(require 'dap-go)
+;; CHRI20200713, seems broken: 
+;; (dap-mode 1)
+;; (dap-ui-mode 1)
+;; (dap-tooltip-mode 1)
+;; (tooltip-mode 1)
+;; (dap-ui-controls-mode 1)
+;; (require 'dap-go)
 
 ;;; Enable bpftrace mode.
 (require 'bpftrace-mode)
@@ -319,6 +322,12 @@ The function wraps a function FN with `ignore-errors' macro."
 (setq company-idle-delay 0)
 (setq company-minimum-prefix-length 1)
 (setq company-selection-wrap-around t)
+;; TAB -> complete current, C-TAB -> complete common
+(with-eval-after-load 'company
+  (define-key company-active-map (kbd "<return>") nil)
+  (define-key company-active-map (kbd "RET") nil)
+  (define-key company-active-map (kbd "<C-tab>") 'company-complete-common)
+  (define-key company-active-map (kbd "<tab>") 'company-complete-selection))
 
 ;; My personalized shortcuts:
 (global-set-key [f5] 'compile)
@@ -358,6 +367,28 @@ The function wraps a function FN with `ignore-errors' macro."
 (when (fboundp 'company-coq-initialize)
   (add-hook 'coq-mode-hook #'company-coq-initialize))
 ;; End of Proof General
+
+;; Rust
+(require 'toml-mode)
+;; (require 'rust-mode)
+;; (setq rust-format-on-save t)
+;; (add-hook 'rust-mode-hook 'cargo-minor-mode)
+(require 'rustic)
+
+;; org mode
+(setq org-agenda-files
+      '("~/chripell-org/inbox.org"
+	"~/chripell-org/tasks.org"
+	"~/chripell-org/projects.org"))
+(setq org-capture-templates '(("t" "Todo [inbox]" entry
+                               (file+headline "~/chripell-org/inbox.org" "Tasks")
+                               "* TODO %i%?")
+			      ("n" "Note" entry
+			       (file "~/chripell-org/notes.org")
+			       "* Entered on %U\n  %i%?")))
+(setq org-refile-targets '(("~/chripell-org/tasks.org" :maxlevel . 3)
+                           ("~/chripell-org/someday.org" :level . 1)))
+(setq org-todo-keywords '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)" "CANCELLED(c)")))
 
 (provide '.emacs)
 ;;; .emacs ends here
