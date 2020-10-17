@@ -1,0 +1,6 @@
+[Unit]
+Description=X11 is on
+Requires=default.target
+#Wants=foobar.service
+Conflicts=x11off.target
+After=default.target

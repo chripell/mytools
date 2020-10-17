@@ -1,0 +1,12 @@
+[Unit]
+Description=Pop ups on Roccat mouse status change
+Requires=x11on.target
+After=x11on.target
+
+[Service]
+# Wait for the WM to be running.
+ExecStartPre=/bin/sleep 10
+ExecStart=/usr/bin/roccateventhandler
+
+[Install]
+WantedBy=x11on.target

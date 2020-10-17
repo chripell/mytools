@@ -1,0 +1,10 @@
+[Unit]
+Description=Mount disk from the notify area
+Requires=x11on.target
+After=x11on.target
+
+[Service]
+ExecStart=udiskie --tray --no-automount
+
+[Install]
+WantedBy=x11on.target
