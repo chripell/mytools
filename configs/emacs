@@ -29,16 +29,15 @@
  '(ac-set-trigger-key "<backtab>")
  '(ac-trigger-key "<backtab>")
  '(auto-coding-regexp-alist
-   (quote
-    (("^BABYL OPTIONS:[ 	]*-\\*-[ 	]*rmail[ 	]*-\\*-" . no-conversion)
+   '(("^BABYL OPTIONS:[ 	]*-\\*-[ 	]*rmail[ 	]*-\\*-" . no-conversion)
      ("<meta\\b[^>]*\\bcontent=\"text/html; charset=UTF-8\"[^>]*>" . utf-8)
-     ("<\\?xml\\b[^>]*\\bencoding=\"utf-8\"[^>]*\\?>" . utf-8))))
+     ("<\\?xml\\b[^>]*\\bencoding=\"utf-8\"[^>]*\\?>" . utf-8)))
  '(case-fold-search t)
  '(column-number-mode t)
  '(current-language-environment "English")
  '(ecb-layout-window-sizes nil)
  '(ecb-options-version "2.40")
- '(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
+ '(ecb-primary-secondary-mouse-buttons 'mouse-1--C-mouse-1)
  '(eldoc-echo-area-use-multiline-p t)
  '(eldoc-minor-mode-string nil)
  '(elpy-eldoc-show-current-function nil)
@@ -46,20 +45,20 @@
  '(flycheck-posframe-warning-prefix "! ")
  '(global-font-lock-mode t nil (font-lock))
  '(gofmt-command "goimports")
- '(indicate-buffer-boundaries (quote ((t . right) (top . left))))
+ '(indicate-buffer-boundaries '((t . right) (top . left)))
  '(indicate-empty-lines t)
  '(inhibit-startup-screen t)
- '(jde-jdk-registry (quote (("1.6" . "/opt/java"))))
+ '(jde-jdk-registry '(("1.6" . "/opt/java")))
  '(lsp-ui-sideline-enable nil)
  '(mouse-yank-at-point t)
+ '(org-startup-folded nil)
  '(package-selected-packages
-   (quote
-    (rustic cargo rust-mode toml-mode forge company-coq proof-general ws-butler wanderlust go-projectile iedit bpftrace-mode company-lsp lsp-mode flycheck-yamllint flymake-yaml yaml-imenu flycheck-mypy company-lua flymake-lua magit-gh-pulls elpy flymake-python-pyflakes go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode)))
+   '(ccls lsp-jedi ace-window apel async auto-complete avy closql company company-posframe dash dash-functional eldoc emacsql find-file-in-project flim flycheck flycheck-posframe ghub git-commit haskell-mode helm helm-core helm-lsp ivy kotlin-mode lsp-treemacs lua-mode magit markdown-mode posframe project projectile semi transient treemacs typescript-mode with-editor xref yaml-mode yasnippet rustic cargo rust-mode toml-mode forge company-coq proof-general ws-butler wanderlust go-projectile iedit bpftrace-mode company-lsp lsp-mode flycheck-yamllint flymake-yaml yaml-imenu flycheck-mypy company-lua flymake-lua magit-gh-pulls elpy flymake-python-pyflakes go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
- '(rustic-format-trigger (quote on-save))
+ '(rustic-format-trigger 'on-save)
  '(save-place t nil (saveplace))
- '(scroll-bar-mode (quote right))
+ '(scroll-bar-mode 'right)
  '(set-mark-command-repeat-pop t)
  '(show-paren-mode t)
  '(size-indication-mode t)
@@ -269,6 +268,13 @@ The function wraps a function FN with `ignore-errors' macro."
 ;;; lsp mode everywhere!
 (require 'lsp-mode)
 (add-hook 'prog-mode-hook #'lsp)
+;; Foce jedi lps for Python
+;;(require 'lsp-jedi)
+;;(with-eval-after-load "lsp-mode"
+;;    (add-to-list 'lsp-disabled-clients 'pyls)
+;;    (add-to-list 'lsp-enabled-clients 'jedi))
+(require 'ccls)
+(setq ccls-executable "/usr/bin/ccls")
 
 ;;; Enable Debugger Adapter Mode.
 ;; CHRI20200713, seems broken: 
@@ -291,6 +297,19 @@ The function wraps a function FN with `ignore-errors' macro."
 (setq yas-snippet-dirs
       '("~/git/yasnippet-snippets/snippets"))
 (yas-global-mode 1)
+;; keys for expansion
+(define-key yas-minor-mode-map (kbd "<tab>") nil)
+(define-key yas-minor-mode-map (kbd "TAB") nil)
+(define-key yas-minor-mode-map (kbd "<f9>") yas-maybe-expand)
+;; keys for navigation
+(define-key yas-keymap [(tab)]       nil)
+(define-key yas-keymap (kbd "TAB")   nil)
+(define-key yas-keymap [(shift tab)] nil)
+(define-key yas-keymap [backtab]     nil)
+(define-key yas-keymap (kbd "<f9>")
+  (yas-filtered-definition 'yas-next-field-or-maybe-expand))
+(define-key yas-keymap (kbd "<S-f9>")
+  (yas-filtered-definition 'yas-prev-field))
 
 ;; posframe to show suggestions.
 (require 'ivy-posframe)
