@@ -27,15 +27,8 @@ export PATH=$PATH:$HOME/.local/bin
 
 printf "\e[?2004l"
 
-if ! pgrep -u "$USER" ssh-agent > /dev/null; then
-    ssh-agent > ~/.ssh-agent-thing
-fi
-if [[ "$SSH_AGENT_PID" == "" ]]; then
-    eval "$(<~/.ssh-agent-thing)"
-fi
-
 if [[ -n "`which luarocks 2>/dev/null`" ]]; then
-    eval `luarocks path --bin`
+    eval `luarocks path --bin --lua-version 5.3`
 fi
 
 export WORKON_HOME=~/python-virtual-environments
@@ -44,8 +37,8 @@ source /usr/bin/virtualenvwrapper_lazy.sh
 # https://www.virtualbox.org/ticket/13653
 CR_RENDER_FORCE_PRESENT_MAIN_THREAD=0
 
-# for mypy
-export MYPYPATH=/usr/lib/python3.8/site-packages/
+# Enable VritualBox Debug menu
+export VBOX_GUI_DBG_ENABLED=true
 
 # TAB with variable does what is supposed to do
 shopt -s direxpand
@@ -53,3 +46,10 @@ shopt -s direxpand
 # bcc tools
 export PATH=$PATH:/usr/share/bcc/tools
 export MANPATH=$MANPATH:/usr/share/bcc/man
+
+# TPM2
+export TPM2_PKCS11_STORE=/home/chri/tpm2_pkcs11_store
+alias tpm2pkcs11-tool="pkcs11-tool --module /usr/lib/pkcs11/libtpm2_pkcs11.so"
+
+# ncdu, some color please :-)
+alias ncdu="ncdu --color dark"
