@@ -20,7 +20,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     by_n = collections.Counter()
     by_bytes = collections.Counter()
-    matcher = re.compile(r"^From:.*?\n?.*\W([\w\.-]+@[\w\.-]+)",
+    matcher = re.compile(r"^From:.*?\n?.*[^\w\.-]([\w\.-]+@[\w\.-]+)",
                          flags=(re.MULTILINE | re.IGNORECASE))
     for name in os.listdir(args.dir):
         fname = os.path.join(args.dir, name)
