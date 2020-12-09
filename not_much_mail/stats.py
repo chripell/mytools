@@ -5,8 +5,18 @@ import collections
 import os
 import re
 
-def show_top(d):
+def sizeof_fmt(num, suffix='B'):
+    for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
+        if abs(num) < 1024.0:
+            return "%3.1f %s%s" % (num, unit, suffix)
+        num /= 1024.0
+    return "%.1f%s%s" % (num, 'Yi', suffix)
+
+
+def show_top(d, human=False):
     for x, n in d:
+        if human:
+            n = sizeof_fmt(n)
         print(x, n)
 
 
@@ -38,4 +48,4 @@ if __name__ == "__main__":
     print(f"Top {args.top} by number:")
     show_top(by_n.most_common(args.top))
     print(f"Top {args.top} by size:")
-    show_top(by_bytes.most_common(args.top))
+    show_top(by_bytes.most_common(args.top), human=True)
