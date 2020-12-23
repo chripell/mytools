@@ -4,6 +4,8 @@ import argparse
 import collections
 import os
 import re
+import typing
+
 
 def sizeof_fmt(num, suffix='B'):
     for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
@@ -28,8 +30,8 @@ if __name__ == "__main__":
     parser.add_argument("--top", type=int, default=100,
                         help="number of top to show")
     args = parser.parse_args()
-    by_n = collections.Counter()
-    by_bytes = collections.Counter()
+    by_n: typing.Counter[str] = collections.Counter()
+    by_bytes: typing.Counter[str] = collections.Counter()
     matcher = re.compile(r"^From:.*?\n?.*[^\w\.-]([\w\.-]+@[\w\.-]+)",
                          flags=(re.MULTILINE | re.IGNORECASE))
     for name in os.listdir(args.dir):
