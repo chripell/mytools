@@ -53,7 +53,7 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(ccls lsp-jedi ace-window apel async auto-complete avy closql company company-posframe dash dash-functional eldoc emacsql find-file-in-project flim flycheck flycheck-posframe ghub git-commit haskell-mode helm helm-core helm-lsp ivy kotlin-mode lsp-treemacs lua-mode magit markdown-mode posframe project projectile semi transient treemacs typescript-mode with-editor xref yaml-mode yasnippet rustic cargo rust-mode toml-mode forge company-coq proof-general ws-butler wanderlust go-projectile iedit bpftrace-mode company-lsp lsp-mode flycheck-yamllint flymake-yaml yaml-imenu flycheck-mypy company-lua flymake-lua magit-gh-pulls elpy flymake-python-pyflakes go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode))
+   '(highlight-indentation ht hydra ivy-posframe jsonrpc pyvenv wanderlust web-server websocket ccls lsp-jedi ace-window apel async auto-complete avy closql company company-posframe dash dash-functional eldoc emacsql find-file-in-project flim flycheck flycheck-posframe ghub git-commit haskell-mode helm helm-core helm-lsp ivy kotlin-mode lsp-treemacs lua-mode magit markdown-mode posframe project projectile semi transient treemacs typescript-mode with-editor xref yaml-mode yasnippet rustic cargo rust-mode toml-mode forge company-coq proof-general ws-butler go-projectile iedit bpftrace-mode company-lsp lsp-mode flycheck-yamllint flymake-yaml yaml-imenu flycheck-mypy company-lua flymake-lua magit-gh-pulls elpy flymake-python-pyflakes go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -91,80 +91,6 @@
 ;; Enable Javascript mode.
 (add-to-list 'auto-mode-alist '("\\.js\\'" . javascript-mode))
 (autoload 'javascript-mode "javascript" nil t)
-
-;; wanderlust email client.
-(autoload 'wl "wl" "Wanderlust" t)
-(autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
-(autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
-;; IMAP
-(setq elmo-imap4-default-server "imap.gmail.com")
-(setq elmo-imap4-default-user "chripell@gmail.com")
-(setq elmo-imap4-default-authenticate-type 'clear)
-(setq elmo-imap4-default-port '993)
-(setq elmo-imap4-default-stream-type 'ssl)
-(setq elmo-imap4-use-modified-utf7 t)
-;; SMTP
-(setq wl-smtp-connection-type 'starttls)
-(setq wl-smtp-posting-port 587)
-(setq wl-smtp-authenticate-type "plain")
-(setq wl-smtp-posting-user "chripell")
-(setq wl-smtp-posting-server "smtp.gmail.com")
-(setq wl-local-domain "gmail.com")
-(setq wl-default-folder "%inbox")
-(setq wl-default-spec "%")
-(setq wl-draft-folder "%[Gmail]/Drafts") ; Gmail IMAP
-(setq wl-trash-folder "%[Gmail]/Trash")
-(setq wl-folder-check-async t)
-(autoload 'wl-user-agent-compose "wl-draft" nil t)
-(if (boundp 'mail-user-agent)
-    (setq mail-user-agent 'wl-user-agent))
-(if (fboundp 'define-mail-user-agent)
-    (define-mail-user-agent
-      'wl-user-agent
-      'wl-user-agent-compose
-      'wl-draft-send
-      'wl-draft-kill
-      'mail-send-hook))
-(setq wl-from "Christian Pellegrin <chripell@gmail.com>"
-      ;; All system folders (draft, trash, spam, etc) are placed in the
-      ;; [Gmail]-folder, except inbox. "%" means it's an IMAP-folder
-      wl-default-folder "%inbox"
-      wl-draft-folder   "%[Gmail]/Drafts"
-      wl-trash-folder   "%[Gmail]/Trash"
-      ;; The below is not necessary when you send mail through Gmail's SMTP server,
-      ;; see https://support.google.com/mail/answer/78892?hl=en&rd=1
-      ;; wl-fcc            "%[Gmail]/Sent"
-
-      ;; Mark sent messages as read (sent messages get sent back to you and
-      ;; placed in the folder specified by wl-fcc)
-      wl-fcc-force-as-read    t
-
-      ;; For auto-completing foldernames
-      wl-default-spec "%")
-;; mailcrypt
-;; (require 'mailcrypt)
-;; (add-hook 'wl-summary-mode-hook 'mc-install-read-mode)
-;; (add-hook 'wl-mail-setup-hook 'mc-install-write-mode)
-;; (defun mc-wl-verify-signature ()
-;;   (interactive)
-;;   (save-window-excursion
-;;     (wl-summary-jump-to-current-message)
-;;     (mc-verify)))
-;; (defun mc-wl-decrypt-message ()
-;;   (interactive)
-;;   (save-window-excursion
-;;     (wl-summary-jump-to-current-message)
-;;     (let ((inhibit-read-only t))
-;;       (mc-decrypt))))
-;; (eval-after-load "mailcrypt"
-;;   '(setq mc-modes-alist
-;;        (append
-;;         (quote
-;;          ((wl-draft-mode (encrypt . mc-encrypt-message)
-;;             (sign . mc-sign-message))
-;;           (wl-summary-mode (decrypt . mc-wl-decrypt-message)
-;;             (verify . mc-wl-verify-signature))))
-;;         mc-modes-alist)))
 
 ;; Enable Python mode.
 (autoload 'python-mode "python-mode.el" "Python mode." t)
@@ -269,10 +195,10 @@ The function wraps a function FN with `ignore-errors' macro."
 (require 'lsp-mode)
 (add-hook 'prog-mode-hook #'lsp)
 ;; Foce jedi lps for Python
-;;(require 'lsp-jedi)
-;;(with-eval-after-load "lsp-mode"
-;;    (add-to-list 'lsp-disabled-clients 'pyls)
-;;    (add-to-list 'lsp-enabled-clients 'jedi))
+;; (require 'lsp-jedi)
+;; (with-eval-after-load "lsp-mode"
+;;     (add-to-list 'lsp-disabled-clients 'pyls)
+;;     (add-to-list 'lsp-enabled-clients 'jedi))
 (require 'ccls)
 (setq ccls-executable "/usr/bin/ccls")
 
@@ -408,6 +334,22 @@ The function wraps a function FN with `ignore-errors' macro."
 (setq org-refile-targets '(("~/chripell-org/tasks.org" :maxlevel . 3)
                            ("~/chripell-org/someday.org" :level . 1)))
 (setq org-todo-keywords '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)" "CANCELLED(c)")))
+
+;; notmuch email
+(autoload 'notmuch "notmuch" "notmuch mail" t)
+(setq mail-user-agent 'message-user-agent)
+(setq user-mail-address "chripell@gmail.com"
+      user-full-name "Christian Pellegrin")
+(setq smtpmail-smtp-server "smtp.gmail.com"
+      message-send-mail-function 'message-smtpmail-send-it)
+(setq smtpmail-debug-info t)
+(setq message-default-mail-headers "Cc: \nBcc: \n")
+(setq message-auto-save-directory "~/mail/draft")
+(setq message-kill-buffer-on-exit t)
+(setq message-directory "~/mail/")
+
+;; Support C-x C-e from bash:
+(add-to-list 'auto-mode-alist '("/bash-fc" . shell-script-mode))
 
 (provide '.emacs)
 ;;; .emacs ends here
