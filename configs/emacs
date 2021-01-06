@@ -53,7 +53,7 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(highlight-indentation ht hydra ivy-posframe jsonrpc pyvenv wanderlust web-server websocket ccls lsp-jedi ace-window apel async auto-complete avy closql company company-posframe dash dash-functional eldoc emacsql find-file-in-project flim flycheck flycheck-posframe ghub git-commit haskell-mode helm helm-core helm-lsp ivy kotlin-mode lsp-treemacs lua-mode magit markdown-mode posframe project projectile semi transient treemacs typescript-mode with-editor xref yaml-mode yasnippet rustic cargo rust-mode toml-mode forge company-coq proof-general ws-butler go-projectile iedit bpftrace-mode company-lsp lsp-mode flycheck-yamllint flymake-yaml yaml-imenu flycheck-mypy company-lua flymake-lua magit-gh-pulls elpy flymake-python-pyflakes go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode))
+   '(ein ipython-shell-send highlight-indentation ht hydra ivy-posframe jsonrpc pyvenv wanderlust web-server websocket ccls lsp-jedi ace-window apel async auto-complete avy closql company company-posframe dash dash-functional eldoc emacsql find-file-in-project flim flycheck flycheck-posframe ghub git-commit haskell-mode helm helm-core helm-lsp ivy kotlin-mode lsp-treemacs lua-mode magit markdown-mode posframe project projectile semi transient treemacs typescript-mode with-editor xref yaml-mode yasnippet rustic cargo rust-mode toml-mode forge company-coq proof-general ws-butler go-projectile iedit bpftrace-mode company-lsp lsp-mode flycheck-yamllint flymake-yaml yaml-imenu flycheck-mypy company-lua flymake-lua magit-gh-pulls elpy flymake-python-pyflakes go-guru go-mode go-autocomplete flymake-go menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -97,8 +97,11 @@
 (setq auto-mode-alist (append '(("/.*\.py\'" . python-mode)) auto-mode-alist))
 ;; Enable elpy.
 (elpy-enable)
-;; Enable MyPy
+;; Enable MyPy.
 (eval-after-load 'flymake '(require 'flymake-mypy))
+;; Use ipython as a shell.
+(setq python-shell-interpreter "ipython"
+  python-shell-interpreter-args "--simple-prompt -i")
 
 ;; Nicer menu bar.
 (eval-after-load "menu-bar" '(require 'menu-bar+))
