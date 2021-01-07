@@ -53,7 +53,7 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(flymake gh ido-completing-read+ logito marshal pcache flycheck-ocaml flycheck-pyflakes ein ipython-shell-send highlight-indentation ht hydra ivy-posframe jsonrpc pyvenv wanderlust web-server websocket ccls lsp-jedi ace-window apel async auto-complete avy closql company company-posframe dash dash-functional eldoc emacsql find-file-in-project flim flycheck flycheck-posframe ghub git-commit haskell-mode helm helm-core helm-lsp ivy kotlin-mode lsp-treemacs lua-mode magit markdown-mode posframe project projectile semi transient treemacs typescript-mode with-editor xref yaml-mode yasnippet rustic cargo rust-mode toml-mode forge company-coq proof-general ws-butler go-projectile iedit bpftrace-mode company-lsp lsp-mode flycheck-yamllint yaml-imenu flycheck-mypy company-lua magit-gh-pulls elpy go-guru go-mode go-autocomplete menu-bar+ markdown-preview-mode browse-kill-ring+ android-mode))
+   '(flymake gh ido-completing-read+ logito marshal pcache flycheck-ocaml flycheck-pyflakes ein ipython-shell-send highlight-indentation ht hydra ivy-posframe jsonrpc pyvenv wanderlust web-server websocket ccls lsp-jedi ace-window apel async auto-complete avy closql company company-posframe dash dash-functional eldoc emacsql find-file-in-project flim flycheck flycheck-posframe ghub git-commit haskell-mode helm helm-core helm-lsp ivy kotlin-mode lsp-treemacs lua-mode magit markdown-mode posframe project projectile semi transient treemacs typescript-mode with-editor xref yaml-mode yasnippet rustic cargo rust-mode toml-mode forge company-coq proof-general ws-butler go-projectile iedit bpftrace-mode company-lsp lsp-mode flycheck-yamllint yaml-imenu flycheck-mypy company-lua magit-gh-pulls elpy go-guru go-mode go-autocomplete markdown-preview-mode browse-kill-ring+ android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -100,9 +100,6 @@
 ;; Use ipython as a shell.
 (setq python-shell-interpreter "ipython"
   python-shell-interpreter-args "--simple-prompt -i")
-
-;; Nicer menu bar.
-(eval-after-load "menu-bar" '(require 'menu-bar+))
 
 ;; Load Go guru.
 (require 'go-guru)
