@@ -103,16 +103,24 @@
 
 ;; Load Go guru.
 (require 'go-guru)
-;; Run gofmt on save, Change some keybindings for Go.
+;; Keybindings for Go guru.
 (defun my-go-mode-hook ()
   "Hook for Go mode."
-  (add-hook 'before-save-hook 'gofmt-before-save)
+  ;; (add-hook 'before-save-hook 'gofmt-before-save)
   (local-set-key (kbd "M-.") 'godef-jump)
   (local-set-key (kbd "M-*") 'pop-tag-mark)
   (go-guru-hl-identifier-mode)
   (auto-complete-mode 1)
   )
 (add-hook 'go-mode-hook 'my-go-mode-hook)
+;; Go LSP
+(add-hook 'go-mode-hook #'lsp-deferred)
+;; Set up before-save hooks to format buffer and add/delete imports.
+;; Make sure you don't have other gofmt/goimports hooks enabled.
+(defun lsp-go-install-save-hooks ()
+  (add-hook 'before-save-hook #'lsp-format-buffer t t)
+  (add-hook 'before-save-hook #'lsp-organize-imports t t))
+(add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
 
 ;; Sppedbar stuff, on F12 open, S-F12 close.
 (require 'sr-speedbar)
