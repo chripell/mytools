@@ -357,5 +357,8 @@ The function wraps a function FN with `ignore-errors' macro."
 ;; Support C-x C-e from bash:
 (add-to-list 'auto-mode-alist '("/bash-fc" . shell-script-mode))
 
+;; I prefer zap-up-to-char
+(global-set-key "\M-z" 'zap-up-to-char)
+
 (provide '.emacs)
 ;;; .emacs ends here
