@@ -57,7 +57,7 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(lsp-ui which-key-posframe which-key bazel elpher lsp-dart flymake gh ido-completing-read+ logito marshal pcache flycheck-ocaml flycheck-pyflakes ein ipython-shell-send highlight-indentation ht hydra ivy-posframe jsonrpc pyvenv wanderlust web-server websocket ccls lsp-jedi ace-window apel async auto-complete avy closql company company-posframe dash dash-functional eldoc emacsql find-file-in-project flim flycheck flycheck-posframe ghub git-commit haskell-mode ivy kotlin-mode lsp-treemacs lua-mode magit markdown-mode posframe project projectile semi transient treemacs typescript-mode with-editor xref yaml-mode yasnippet rustic cargo rust-mode toml-mode forge company-coq proof-general ws-butler go-projectile iedit bpftrace-mode company-lsp lsp-mode flycheck-yamllint yaml-imenu flycheck-mypy company-lua magit-gh-pulls elpy go-guru go-mode go-autocomplete markdown-preview-mode browse-kill-ring+ android-mode))
+   '(lsp-ui which-key-posframe which-key bazel elpher lsp-dart flymake gh ido-completing-read+ logito marshal pcache flycheck-ocaml flycheck-pyflakes ein ipython-shell-send highlight-indentation ht hydra jsonrpc pyvenv wanderlust web-server websocket ccls lsp-jedi ace-window apel async auto-complete avy closql company company-posframe dash dash-functional eldoc emacsql find-file-in-project flim flycheck flycheck-posframe ghub git-commit haskell-mode kotlin-mode lsp-treemacs lua-mode magit markdown-mode posframe project projectile semi transient treemacs typescript-mode with-editor xref yaml-mode yasnippet rustic cargo rust-mode toml-mode forge company-coq proof-general ws-butler go-projectile iedit bpftrace-mode company-lsp lsp-mode flycheck-yamllint yaml-imenu flycheck-mypy company-lua magit-gh-pulls elpy go-guru go-mode go-autocomplete markdown-preview-mode browse-kill-ring+ android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -248,15 +248,6 @@ The function wraps a function FN with `ignore-errors' macro."
   (yas-filtered-definition 'yas-prev-field))
 
 ;; posframe to show suggestions.
-(require 'ivy-posframe)
-;; display at `ivy-posframe-style'
-(setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display)))
-;; (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-center)))
-;; (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-window-center)))
-;; (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-bottom-left)))
-;; (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-window-bottom-left)))
-;; (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-top-center)))
-(ivy-posframe-mode 1)
 (require 'company-posframe)
 (company-posframe-mode 1)
 (with-eval-after-load 'flycheck
