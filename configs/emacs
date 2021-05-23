@@ -253,19 +253,7 @@ The function wraps a function FN with `ignore-errors' macro."
 (setq yas-snippet-dirs
       '("~/git/yasnippet-snippets/snippets"))
 (yas-global-mode 1)
-;; keys for expansion
-(define-key yas-minor-mode-map (kbd "<tab>") nil)
-(define-key yas-minor-mode-map (kbd "TAB") nil)
-(define-key yas-minor-mode-map (kbd "<f9>") yas-maybe-expand)
-;; keys for navigation
-(define-key yas-keymap [(tab)]       nil)
-(define-key yas-keymap (kbd "TAB")   nil)
-(define-key yas-keymap [(shift tab)] nil)
-(define-key yas-keymap [backtab]     nil)
-(define-key yas-keymap (kbd "<f9>")
-  (yas-filtered-definition 'yas-next-field-or-maybe-expand))
-(define-key yas-keymap (kbd "<S-f9>")
-  (yas-filtered-definition 'yas-prev-field))
+(global-set-key (kbd "C-c y") 'company-yasnippet)
 
 ;; posframe to show suggestions.
 (require 'company-posframe)
@@ -384,6 +372,6 @@ The function wraps a function FN with `ignore-errors' macro."
 ;; (which-key-setup-side-window-right-bottom)
 (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
 (add-hook 'lsp-mode-hook 'which-key-mode)
-(provide '.emacs)
 
+(provide '.emacs)
 ;;; .emacs ends here
