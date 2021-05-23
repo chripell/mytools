@@ -18,6 +18,24 @@ local cyclefocus = require('cyclefocus')
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
+-- luarocks --lua-version=5.3 list
+-- Rocks installed for Lua 5.3
+-- ---------------------------
+-- dbus_proxy
+--    0.9.0-1 (installed) - /home/chri/.luarocks/lib/luarocks/rocks-5.3
+-- enum
+--    0.1.0-1 (installed) - /home/chri/.luarocks/lib/luarocks/rocks-5.3
+-- lgi
+--    0.9.2-1 (installed) - /home/chri/.luarocks/lib/luarocks/rocks-5.3
+-- power_widget
+--    0.3.5-1 (installed) - /home/chri/.luarocks/lib/luarocks/rocks-5.3
+-- pulseaudio_dbus
+--    0.12.0-1 (installed) - /home/chri/.luarocks/lib/luarocks/rocks-5.3
+-- pulseaudio_widget
+--    0.4.0-1 (installed) - /home/chri/.luarocks/lib/luarocks/rocks-5.3
+-- upower_dbus
+--    0.3.0-2 (installed) - /home/chri/.luarocks/lib/luarocks/rocks-5.3
+
 -- PulseAudio
 local pulse = require("pulseaudio_widget")
 
@@ -545,13 +563,14 @@ awful.rules.rules = {
           "xtightvncviewer"},
 
         name = {
-          "Event Tester",  -- xev.
+	   "Event Tester",  -- xev.
+	   "Camera Control",
         },
         role = {
           "AlarmWindow",  -- Thunderbird's calendar.
           "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
         }
-      }, properties = { floating = true }},
+      }, properties = { floating = true, placement = awful.placement.centered }},
 
     -- Add titlebars to normal clients and dialogs
     { rule_any = {type = { "normal", "dialog" }
