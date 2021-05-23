@@ -57,7 +57,7 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(lsp-ivy lsp-ui which-key-posframe which-key bazel elpher lsp-dart flymake ido-completing-read+ flycheck-ocaml flycheck-pyflakes ein ipython-shell-send highlight-indentation ht wanderlust web-server websocket ccls lsp-jedi async company company-posframe dash dash-functional find-file-in-project flim flycheck flycheck-posframe ghub git-commit haskell-mode lsp-treemacs magit markdown-mode posframe project projectile semi transient treemacs with-editor xref yaml-mode rustic cargo rust-mode toml-mode forge company-coq proof-general iedit bpftrace-mode company-lsp lsp-mode flycheck-yamllint flycheck-mypy company-lua magit-gh-pulls elpy go-guru go-mode go-autocomplete markdown-preview-mode browse-kill-ring+ android-mode))
+   '(counsel lsp-ivy lsp-ui which-key-posframe which-key bazel elpher lsp-dart flymake ido-completing-read+ flycheck-ocaml flycheck-pyflakes ein ipython-shell-send highlight-indentation ht wanderlust web-server websocket ccls lsp-jedi async company company-posframe dash dash-functional find-file-in-project flim flycheck flycheck-posframe ghub git-commit haskell-mode lsp-treemacs magit markdown-mode posframe project projectile semi transient treemacs with-editor xref yaml-mode rustic cargo rust-mode toml-mode forge company-coq proof-general iedit bpftrace-mode company-lsp lsp-mode flycheck-yamllint flycheck-mypy company-lua magit-gh-pulls elpy go-guru go-mode go-autocomplete markdown-preview-mode browse-kill-ring+ android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -149,26 +149,42 @@ The function wraps a function FN with `ignore-errors' macro."
 (global-set-key [S-up] (ignore-error-wrapper 'windmove-up))
 (global-set-key [S-down] (ignore-error-wrapper 'windmove-down))
 
-;; IDO for fancy M-X and friends completion.
-(require 'flx-ido)
-(ido-mode 1)
-(ido-everywhere 1)
-(flx-ido-mode 1)
-(require 'ido-completing-read+)
-(ido-ubiquitous-mode 1)
-(require 'smex)
-(smex-initialize)
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
-(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
-(setq magit-completing-read-function 'magit-ido-completing-read)
-(setq ido-enable-flex-matching t)
-(setq ido-use-faces nil)
-;; for: lsp-ido-workspace-symbol
-(require 'lsp-ido)
-;; ivy perhaps is easier to read, use lsp-ivy-workspace-symbol or
+;; ivy for fancy M-X and friends completion.
+(require 'ivy)
+(ivy-mode 1)
+(setq ivy-use-virtual-buffers t)
+(setq ivy-count-format "(%d/%d) ")
+;; Ivy-based interface to standard commands
+(global-set-key (kbd "C-s") 'swiper-isearch)
+(global-set-key (kbd "M-x") 'counsel-M-x)
+(global-set-key (kbd "C-x C-f") 'counsel-find-file)
+(global-set-key (kbd "M-y") 'counsel-yank-pop)
+(global-set-key (kbd "<f1> f") 'counsel-describe-function)
+(global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+(global-set-key (kbd "<f1> l") 'counsel-find-library)
+(global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+(global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+(global-set-key (kbd "<f2> j") 'counsel-set-variable)
+(global-set-key (kbd "C-x b") 'ivy-switch-buffer)
+(global-set-key (kbd "C-c v") 'ivy-push-view)
+(global-set-key (kbd "C-c V") 'ivy-pop-view)
+;; Ivy-based interface to shell and system tools
+(global-set-key (kbd "C-c c") 'counsel-compile)
+(global-set-key (kbd "C-c g") 'counsel-git)
+(global-set-key (kbd "C-c j") 'counsel-git-grep)
+(global-set-key (kbd "C-c L") 'counsel-git-log)
+(global-set-key (kbd "C-c m") 'counsel-linux-app)
+;; Ivy-resume and other commands
+(global-set-key (kbd "C-c C-r") 'ivy-resume)
+(global-set-key (kbd "C-c b") 'counsel-bookmark)
+(global-set-key (kbd "C-c d") 'counsel-descbinds)
+(global-set-key (kbd "C-c o") 'counsel-outline)
+(global-set-key (kbd "C-c t") 'counsel-load-theme)
+(global-set-key (kbd "C-c F") 'counsel-org-file)
+;; use ivy lsp-ivy-workspace-symbol or
 ;; lsp-ivy-global-workspace-symbol:
 (require 'lsp-ivy)
+;; rebind C-M-.
 (define-key lsp-mode-map [remap xref-find-apropos] #'lsp-ivy-workspace-symbol)
 
 ;; Sound is annoying, just flash the screen on error.
