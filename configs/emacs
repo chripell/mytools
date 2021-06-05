@@ -57,7 +57,7 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(counsel lsp-ivy lsp-ui which-key-posframe which-key bazel elpher lsp-dart flymake ido-completing-read+ flycheck-ocaml flycheck-pyflakes ein ipython-shell-send highlight-indentation ht wanderlust web-server websocket ccls lsp-jedi async company company-posframe dash dash-functional find-file-in-project flim flycheck flycheck-posframe ghub git-commit haskell-mode lsp-treemacs magit markdown-mode posframe project projectile semi transient treemacs with-editor xref yaml-mode rustic cargo rust-mode toml-mode forge company-coq proof-general iedit bpftrace-mode company-lsp lsp-mode flycheck-yamllint flycheck-mypy company-lua magit-gh-pulls elpy go-guru go-mode go-autocomplete markdown-preview-mode browse-kill-ring+ android-mode))
+   '(magithub counsel lsp-ivy lsp-ui which-key-posframe which-key bazel elpher lsp-dart flymake ido-completing-read+ flycheck-ocaml flycheck-pyflakes ein ipython-shell-send highlight-indentation ht wanderlust web-server websocket ccls lsp-jedi async company company-posframe dash dash-functional find-file-in-project flim flycheck flycheck-posframe ghub git-commit haskell-mode lsp-treemacs magit markdown-mode posframe project projectile semi transient treemacs with-editor xref yaml-mode rustic cargo rust-mode toml-mode forge company-coq proof-general iedit bpftrace-mode company-lsp lsp-mode flycheck-yamllint flycheck-mypy company-lua magit-gh-pulls elpy go-guru go-mode go-autocomplete markdown-preview-mode browse-kill-ring+ android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -67,7 +67,8 @@
  '(show-paren-mode t)
  '(size-indication-mode t)
  '(speedbar-show-unknown-files t)
- '(tool-bar-mode nil))
+ '(tool-bar-mode nil)
+ '(warning-suppress-types '((lsp-mode))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -372,6 +373,7 @@ The function wraps a function FN with `ignore-errors' macro."
 ;; (which-key-setup-side-window-right-bottom)
 (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
 (add-hook 'lsp-mode-hook 'which-key-mode)
+(which-key-mode)
 
 (provide '.emacs)
 ;;; .emacs ends here
