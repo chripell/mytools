@@ -45,8 +45,6 @@
  '(eldoc-echo-area-use-multiline-p t)
  '(eldoc-minor-mode-string nil)
  '(elpy-eldoc-show-current-function nil)
- '(flycheck-posframe-error-prefix "!! ")
- '(flycheck-posframe-warning-prefix "! ")
  '(global-font-lock-mode t nil (font-lock))
  '(gofmt-command "goimports")
  '(indicate-buffer-boundaries '((t . right) (top . left)))
@@ -57,7 +55,7 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(magithub counsel lsp-ivy lsp-ui which-key-posframe which-key bazel elpher lsp-dart flymake ido-completing-read+ flycheck-ocaml flycheck-pyflakes ein ipython-shell-send highlight-indentation ht wanderlust web-server websocket ccls lsp-jedi async company company-posframe dash dash-functional find-file-in-project flim flycheck flycheck-posframe ghub git-commit haskell-mode lsp-treemacs magit markdown-mode posframe project projectile semi transient treemacs with-editor xref yaml-mode rustic cargo rust-mode toml-mode forge company-coq proof-general iedit bpftrace-mode company-lsp lsp-mode flycheck-yamllint flycheck-mypy company-lua magit-gh-pulls elpy go-guru go-mode go-autocomplete markdown-preview-mode browse-kill-ring+ android-mode))
+   '(lsp-pyright counsel lsp-ivy lsp-ui which-key-posframe which-key bazel elpher lsp-dart flymake ido-completing-read+ flycheck-ocaml flycheck-pyflakes ein ipython-shell-send highlight-indentation ht wanderlust web-server websocket ccls lsp-jedi async company company-posframe dash dash-functional find-file-in-project flim flycheck flycheck-posframe ghub git-commit haskell-mode lsp-treemacs magit markdown-mode posframe project projectile semi transient treemacs with-editor xref yaml-mode rustic cargo rust-mode toml-mode forge company-coq proof-general iedit bpftrace-mode company-lsp lsp-mode flycheck-yamllint flycheck-mypy company-lua magit-gh-pulls elpy go-guru go-mode go-autocomplete markdown-preview-mode browse-kill-ring+ android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -225,11 +223,25 @@ The function wraps a function FN with `ignore-errors' macro."
 ;;; lsp mode everywhere!
 (require 'lsp-mode)
 (add-hook 'prog-mode-hook #'lsp)
-;; Foce jedi lps for Python
-;; (require 'lsp-jedi)
-;; (with-eval-after-load "lsp-mode"
-;;     (add-to-list 'lsp-disabled-clients 'pyls)
-;;     (add-to-list 'lsp-enabled-clients 'jedi))
+;; Note that pyls is the default
+;; Foce jedi lsp for Python
+(require 'lsp-jedi)
+;; flycheck lsp doesn't work with Jedi.
+;; https://github.com/flycheck/flycheck/issues/1762
+(defvar-local my/flycheck-local-cache nil)
+(defun my/flycheck-checker-get (fn checker property)
+  (or (alist-get property (alist-get checker my/flycheck-local-cache))
+      (funcall fn checker property)))
+(advice-add 'flycheck-checker-get :around 'my/flycheck-checker-get)
+(add-hook 'lsp-managed-mode-hook
+          (lambda ()
+            (when (derived-mode-p 'python-mode)
+              (setq my/flycheck-local-cache '((lsp . ((next-checkers . (python-flake8)))))))))
+(with-eval-after-load 'flycheck
+  (flycheck-add-next-checker 'python-flake8 'python-mypy))
+;; Force pyright
+;; (require 'lsp-pyright)
+;; C/C++:
 (require 'ccls)
 (setq ccls-executable "/usr/bin/ccls")
 
@@ -262,9 +274,6 @@ The function wraps a function FN with `ignore-errors' macro."
 (with-eval-after-load 'flycheck
   (require 'flycheck-posframe)
   (flycheck-posframe-configure-pretty-defaults)
-  (custom-set-variables
-   '(flycheck-posframe-error-prefix "!! ")
-   '(flycheck-posframe-warning-prefix "! "))
   (add-hook 'flycheck-mode-hook #'flycheck-posframe-mode))
 
 ;; ws_butler for unobtrusively delete  whitespace
