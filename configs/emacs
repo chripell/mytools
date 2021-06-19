@@ -143,10 +143,10 @@ The function wraps a function FN with `ignore-errors' macro."
       (interactive)
       (ignore-errors
         (funcall fn)))))
-(global-set-key [S-left] (ignore-error-wrapper 'windmove-left))
-(global-set-key [S-right] (ignore-error-wrapper 'windmove-right))
-(global-set-key [S-up] (ignore-error-wrapper 'windmove-up))
-(global-set-key [S-down] (ignore-error-wrapper 'windmove-down))
+(global-set-key [M-left] (ignore-error-wrapper 'windmove-left))
+(global-set-key [M-right] (ignore-error-wrapper 'windmove-right))
+(global-set-key [M-up] (ignore-error-wrapper 'windmove-up))
+(global-set-key [M-down] (ignore-error-wrapper 'windmove-down))
 
 ;; ivy for fancy M-X and friends completion.
 (require 'ivy)
