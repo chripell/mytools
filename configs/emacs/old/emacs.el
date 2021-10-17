@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t -*-
 ;;; .emacs --- chripell's chaotic dot emacs file.
 ;;; Commentary:
 
@@ -55,7 +56,7 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(lsp-pyright counsel lsp-ivy lsp-ui which-key-posframe which-key bazel elpher lsp-dart flymake ido-completing-read+ flycheck-ocaml flycheck-pyflakes ein ipython-shell-send highlight-indentation ht wanderlust web-server websocket ccls lsp-jedi async company company-posframe dash dash-functional find-file-in-project flim flycheck flycheck-posframe ghub git-commit haskell-mode lsp-treemacs magit markdown-mode posframe project projectile semi transient treemacs with-editor xref yaml-mode rustic cargo rust-mode toml-mode forge company-coq proof-general iedit bpftrace-mode company-lsp lsp-mode flycheck-yamllint flycheck-mypy company-lua magit-gh-pulls elpy go-guru go-mode go-autocomplete markdown-preview-mode browse-kill-ring+ android-mode))
+   '(ivy-rich use-package lsp-pyright counsel lsp-ivy lsp-ui which-key-posframe which-key bazel elpher lsp-dart flymake ido-completing-read+ flycheck-ocaml flycheck-pyflakes ein ipython-shell-send highlight-indentation ht wanderlust web-server websocket ccls lsp-jedi async company company-posframe dash dash-functional find-file-in-project flim flycheck flycheck-posframe ghub git-commit haskell-mode lsp-treemacs magit markdown-mode posframe project projectile semi transient treemacs with-editor xref yaml-mode rustic cargo rust-mode toml-mode forge company-coq proof-general iedit bpftrace-mode company-lsp lsp-mode flycheck-yamllint flycheck-mypy company-lua magit-gh-pulls elpy go-guru go-mode go-autocomplete markdown-preview-mode browse-kill-ring+ android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -132,13 +133,14 @@
  (interactive) (sr-speedbar-open) (sr-speedbar-select-window))
 
 ;; Shift + arrows move point between windows..
-(require 'cl)
+;(eval-when-compile (require 'cl)) ;; lexical-let
 (require 'windmove)
 ;; The next macro ignores error if there is no windows on the left.
 (defun ignore-error-wrapper (fn)
   "Function return new function that ignore errors.
 The function wraps a function FN with `ignore-errors' macro."
-  (lexical-let ((fn fn))
+  ;(lexical-let ((fn fn))
+  (let ((fn fn))
     (lambda ()
       (interactive)
       (ignore-errors
@@ -294,8 +296,7 @@ The function wraps a function FN with `ignore-errors' macro."
 
 ;; My personalized shortcuts:
 (global-set-key [f5] 'compile)
-(global-set-key (kbd "<f12>") 'sr-speedbar-open-and-select)
-(global-set-key (kbd "<S-f12>") 'sr-speedbar-close)
+;; TODO: move both to projectile (global-set-key [f6] 'test)
 (global-set-key [kp-left] 'backward-sexp)
 (global-set-key [kp-right] 'forward-sexp)
 (global-set-key [kp-up] 'backward-up-list)
