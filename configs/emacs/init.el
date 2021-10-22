@@ -108,17 +108,21 @@
 
 ;; ivy & C for fancy M-X and friends completion.
 (use-package ivy
+  :demand
   :diminish
   :bind (("C-x b" . ivy-switch-buffer)
 	 ("C-c v" . ivy-push-view)
 	 ("C-c V" . ivy-pop-view)
-	 ("C-c C-r" . ivy-resume))
+	 ("C-c C-r" . ivy-resume)
+         :map ivy-mode-map
+         ("M-s" . ivy-yank-symbol))
   :custom
   (ivy-count-format "(%d/%d) ")
   (ivy-use-virtual-buffers t)
   :config (ivy-mode))
 (use-package counsel
   :diminish
+  :after ivy
   :bind (("M-x" . counsel-M-x)
 	 ("C-x C-f" . counsel-find-file)
 	 ("M-y" . counsel-yank-pop)
@@ -129,6 +133,7 @@
 	 ("<f2> u" . counsel-unicode-char)
 	 ("<f2> j" . counsel-set-variable)
 	 ("C-c c" . counsel-compile)
+	 ("C-c a" . counsel-ag)
 	 ("C-c g" . counsel-git)
 	 ("C-c j" . counsel-git-grep)
 	 ("C-c L" . counsel-git-log)
@@ -136,15 +141,18 @@
 	 ("C-c b" . counsel-bookmark)
 	 ("C-c d" . counsel-descbinds)
 	 ("C-c o" . counsel-outline)
+	 ("C-c r" . counsel-rg)
 	 ("C-c t" . counsel-load-theme)
 	 ("C-c F" . counsel-org-file))
   :config (counsel-mode))
 (use-package swiper
   :diminish
+  :after ivy
   :bind (("C-s" . swiper)
          ("C-r" . swiper)))
 (use-package ivy-rich
   :diminish
+  :after ivy
   :config
   (ivy-rich-mode 1))
 
@@ -160,9 +168,11 @@
   (define-key yas-minor-mode-map [(tab)] nil)
   (define-key yas-minor-mode-map (kbd "TAB") nil))
 (use-package yasnippet-snippets
-    :diminish)
+  :after yasnippet
+  :diminish)
 (use-package ivy-yasnippet
   :diminish
+  :after yasnippet
   :bind
   ("s-y" . ivy-yasnippet)
   ([S-f9] . ivy-yasnippet))
@@ -190,6 +200,7 @@
     (define-key company-active-map (kbd "<tab>") 'company-complete-selection)))
 (use-package company-posframe
   :diminish
+  :after company
   :init
   (company-posframe-mode 1))
 
@@ -231,30 +242,35 @@
   (use-package lsp-mode
     :init
     (setq lsp-keymap-prefix "s-l")
-    :hook (python-mode . lsp)
+    :hook ((python-mode . lsp)
+           (c++-mode . lsp)
+           (c-mode .lsp)
+           (go-mode . lsp))
     ;; rebind C-M-.
     :bind (:map lsp-mode-map ("C-M-." . lsp-find-references))
     :commands lsp)
-  (use-package lsp-ivy)
-  (use-package lsp-ui :commands lsp-ui-mode)
+  (use-package lsp-ivy
+    :after lsp-mode)
+  (use-package lsp-ui
+    :commands lsp-ui-mode
+    :after lsp-mode)
   (use-package lsp-treemacs
+    :after lsp-mode
     :commands lsp-treemacs-errors-list
     :bind (:map lsp-mode-map
                 ("s-t s" . lsp-treemacs-symbols)
                 ("s-t r" . lsp-treemacs-references)))
   (use-package dap-mode
+    :defer t
+    :after lsp-mode
     :init
     (require 'dap-python))
 
-  ;; optional if you want which-key integration
-  (use-package which-key
-    :diminish
-    :config
-    (which-key-mode))
-
   ;; Enable which-key for learing new keybindings:
   (use-package which-key
-    :init
+    :diminish
+    :demand
+    :config
     (which-key-setup-side-window-bottom)
     (which-key-mode)
     :hook ((lsp-mode . lsp-enable-which-key-integration)
@@ -279,6 +295,7 @@
   ;; Enable elpy.
   (use-package elpy
     :diminish
+    :after python
     :init
     (elpy-enable))
   ;; Use ipython as a shell.
@@ -294,36 +311,46 @@
        Make sure you don't have other gofmt/goimports hooks enabled."
       (add-hook 'before-save-hook 'lsp-format-buffer t t)
       (add-hook 'before-save-hook 'lsp-organize-imports t t))
-    (add-hook 'go-mode-hook 'chri/lsp-go-install-save-hooks))
+    (add-hook 'go-mode 'chri/lsp-go-install-save-hooks)
+    :mode "\\.go\\'")
   (use-package go-playground
     :if (executable-find "go")
     :defines go-playground-basedir
-    :config
-    (setq go-playground-basedir (expand-file-name "~/t")))
+    :init
+    (setq go-playground-basedir (expand-file-name "~/t"))
+    :commands go-playground go-playground-ask-file-name)
   (use-package go-guru
     :if (executable-find "guru")
     :hook (go-mode . go-guru-hl-identifier-mode))
 
   ;; C/C++:
   (use-package ccls
+    :defer t
     :init
-    (setq ccls-executable "/usr/bin/ccls"))
+    (setq ccls-executable "/usr/bin/ccls")
+    :hook ((c-mode c++-mode objc-mode) .
+         (lambda () (require 'ccls) (lsp))))
 
   ;; bpftrace mode
-  (use-package bpftrace-mode)
+  (use-package bpftrace-mode
+    :mode "\\.bt\\'"
+    :interpreter "bpftrace")
 
   ;; Ocaml
   (when (file-readable-p (expand-file-name "~/.emacs.d/opam-user-setup.el"))
-    ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
-    (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
-    ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
-    )
+    (defun opam-setup ()
+      "Loads Ocaml stuff. Call it before using Ocaml, otherwise it slows down startup."
+      (interactive)
+      ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
+      (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+      ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
+      ))
 
   ;; coq / Proof General
   ;; (use-package coq)
   (use-package proof-general
     :defines proof-splash-seen proof-three-window-mode-policy proof-script-fly-past-comments coq-mode-map
-    :config
+    :init
     (setq proof-splash-seen t)
     (setq proof-three-window-mode-policy 'hybrid)
     (setq proof-script-fly-past-comments t)
@@ -335,12 +362,14 @@
 
   ;; Rust
   (use-package rustic
+    :defer t
     :init
     ;; to use rustic-mode even if rust-mode also installed
     (setq auto-mode-alist (delete '("\\.rs\\'" . rust-mode) auto-mode-alist)))
 
   ;; dart/flutter
-  (use-package lsp-dart)
+  (use-package lsp-dart
+    :hook (dart-mode . lsp))
 
   ;; My personalized shortcuts:
   (global-set-key [f5] 'compile)
@@ -383,6 +412,7 @@ The function wraps a function FN with `ignore-errors' macro."
 ;; Projectile mode.
 (use-package projectile
   :init
+  (setq projectile-completion-system 'ivy)
   (when chri/projectile-global (projectile-mode +1))
   :bind (:map projectile-mode-map
               ("s-p" . projectile-command-map)
@@ -401,10 +431,10 @@ The function wraps a function FN with `ignore-errors' macro."
   :config
   (simpleclip-mode 1))
 
-;; org mode
+;; org mode.
 (use-package org
   :defines org-capture-templates org-refile-targets
-  :config
+  :init
   (setq org-agenda-files
 	'("~/chripell-org/inbox.org"
 	  "~/chripell-org/tasks.org"
@@ -417,13 +447,16 @@ The function wraps a function FN with `ignore-errors' macro."
 				 "* Entered on %U\n  %i%?")))
   (setq org-refile-targets '(("~/chripell-org/tasks.org" :maxlevel . 3)
                              ("~/chripell-org/someday.org" :level . 1)))
-  (setq org-todo-keywords '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)" "CANCELLED(c)"))))
+  (setq org-todo-keywords '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)" "CANCELLED(c)")))
+  :mode ("\\.org\\'" . org-mode))
 
-;; notmuch email
+;; notmuch email.
 (when chri/notmuch
   (use-package notmuch
+    :commands notmuch
     :defines smtpmail-smtp-server message-send-mail-function message-default-mail-headers smtpmail-debug-info message-auto-save-directory message-kill-buffer-on-exit message-directory
-    :config
+    :init
+    (setq notmuch-search-oldest-first nil)
     (setq mail-user-agent 'message-user-agent)
     (setq user-mail-address "chripell@gmail.com"
 	  user-full-name "Christian Pellegrin")
@@ -435,11 +468,14 @@ The function wraps a function FN with `ignore-errors' macro."
     (setq message-kill-buffer-on-exit t)
     (setq message-directory "~/mail/")))
 
-;; Support C-x C-e from bash:
+;; Support C-x C-e from bash.
 (add-to-list 'auto-mode-alist '("/bash-fc" . shell-script-mode))
 
-;; I prefer zap-up-to-char
+;; I prefer zap-up-to-char.
 (global-set-key "\M-z" 'zap-up-to-char)
+
+;; Overwrite what is currently selected.
+(delete-selection-mode 1)
 
 ;; My personalized shortcuts:
 (global-set-key [kp-left] 'backward-sexp)
