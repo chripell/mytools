@@ -58,9 +58,11 @@
    '(("^BABYL OPTIONS:[ 	]*-\\*-[ 	]*rmail[ 	]*-\\*-" . no-conversion)
      ("<meta\\b[^>]*\\bcontent=\"text/html; charset=UTF-8\"[^>]*>" . utf-8)
      ("<\\?xml\\b[^>]*\\bencoding=\"utf-8\"[^>]*\\?>" . utf-8)))
+ '(bookmark-save-flag 1)
  '(case-fold-search t)
  '(column-number-mode t)
  '(current-language-environment "English")
+ '(custom-enabled-themes '(deeper-blue))
  '(eldoc-echo-area-use-multiline-p t)
  '(eldoc-minor-mode-string nil)
  '(elpy-eldoc-show-current-function nil)
@@ -139,6 +141,7 @@
 	 ("C-c L" . counsel-git-log)
 	 ("C-c m" . counsel-linux-app)
 	 ("C-c b" . counsel-bookmark)
+	 ("C-c B" . bookmark-set)
 	 ("C-c d" . counsel-descbinds)
 	 ("C-c o" . counsel-outline)
 	 ("C-c r" . counsel-rg)
@@ -149,7 +152,8 @@
   :diminish
   :after ivy
   :bind (("C-s" . swiper)
-         ("C-r" . swiper)))
+         ("C-r" . swiper)
+         ("C-c s" . swiper-all)))
 (use-package ivy-rich
   :diminish
   :after ivy
@@ -372,7 +376,7 @@
     :hook (dart-mode . lsp))
 
   ;; My personalized shortcuts:
-  (global-set-key [f5] 'compile)
+  (global-set-key [f5] 'counsel-compile)
   ;; TODO: move both to projectile (global-set-key [f6] 'test)
   )
 
