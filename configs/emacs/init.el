@@ -59,23 +59,30 @@
      ("<meta\\b[^>]*\\bcontent=\"text/html; charset=UTF-8\"[^>]*>" . utf-8)
      ("<\\?xml\\b[^>]*\\bencoding=\"utf-8\"[^>]*\\?>" . utf-8)))
  '(bookmark-save-flag 1)
+ '(calendar-latitude 53.35)
+ '(calendar-longitude -6.26)
  '(case-fold-search t)
  '(column-number-mode t)
+ '(compilation-scroll-output t)
  '(current-language-environment "English")
  '(custom-enabled-themes '(deeper-blue))
+ '(debug-on-error nil)
+ '(dired-auto-revert-buffer t)
  '(eldoc-echo-area-use-multiline-p t)
  '(eldoc-minor-mode-string nil)
  '(elpy-eldoc-show-current-function nil)
+ '(global-auto-revert-mode t)
  '(global-font-lock-mode t nil (font-lock))
  '(indicate-buffer-boundaries '((t . right) (top . left)))
  '(indicate-empty-lines t)
  '(inhibit-startup-screen t)
  '(lsp-diagnostics-disabled-modes '(python-mode))
  '(lsp-ui-sideline-enable nil)
+ '(magit-auto-revert-mode t)
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
+   '(unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -84,8 +91,12 @@
  '(set-mark-command-repeat-pop t)
  '(show-paren-mode t)
  '(size-indication-mode t)
+ '(tags-revert-without-query t)
  '(tool-bar-mode nil)
- '(warning-suppress-types '((lsp-mode))))
+ '(unicode-fonts-debug-availability t)
+ '(unicode-fonts-use-prepend nil)
+ '(warning-suppress-types '((lsp-mode)))
+ '(wdired-allow-to-change-permissions t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -106,7 +117,17 @@
 (setq-default indent-tabs-mode nil)
 
 ;; Allow disable showing on modeline with :diminish tag
-(use-package diminish)
+(use-package diminish
+ :diminish abbrev-mode
+ :diminish org-indent-mode
+ :diminish apheleia-mode
+ :diminish auto-revert-mode
+ :diminish hungry-delete-mode
+ :diminish hungry-delete
+ :diminish lisp-interaction-mode
+ :diminish visual-line-mode
+ :diminish subword-mode
+ :diminish auto-fill-function)
 
 ;; ivy & C for fancy M-X and friends completion.
 (use-package ivy
@@ -134,12 +155,16 @@
 	 ("<f2> i" . counsel-info-lookup-symbol)
 	 ("<f2> u" . counsel-unicode-char)
 	 ("<f2> j" . counsel-set-variable)
+	 ("C-c TAB" . counsel-company)
 	 ("C-c c" . counsel-compile)
 	 ("C-c a" . counsel-ag)
 	 ("C-c g" . counsel-git)
+	 ("C-c G" . counsel-search)
+	 ("C-c e" . counsel-flycheck)
+	 ("C-c f" . counsel-fonts)
 	 ("C-c j" . counsel-git-grep)
 	 ("C-c L" . counsel-git-log)
-	 ("C-c m" . counsel-linux-app)
+	 ("C-c M" . counsel-linux-app)
 	 ("C-c b" . counsel-bookmark)
 	 ("C-c B" . bookmark-set)
 	 ("C-c d" . counsel-descbinds)
@@ -189,6 +214,7 @@
 
 ;; Use company mode for completion.
 (use-package company
+  :diminish
   :init
   (setq company-idle-delay 0)
   (setq company-minimum-prefix-length 1)
@@ -230,6 +256,13 @@
   (set-face-attribute 'flycheck-posframe-warning-face nil :inherit 'flycheck-error-list-warning)
   (set-face-attribute 'flycheck-posframe-error-face nil :inherit 'flycheck-error-list-error)
   :hook (flycheck-mode . flycheck-posframe-mode))
+
+;; magit
+;; I get errors if I defer this.
+(use-package magit
+  :demand
+  :bind (("C-x g" . magit-status)
+         ("C-x C-g" . magit-status)))
 
 ;; Default font
 (setq default-frame-alist '((font . "Source Code Pro-12")))
@@ -375,9 +408,23 @@
   (use-package lsp-dart
     :hook (dart-mode . lsp))
 
+  ;; devicetree mode
+  (use-package dts-mode
+    :mode "\\.dt[si]\\'")
+
+  ;; markdown mode.
+  (use-package markdown-mode
+    :commands (markdown-mode gfm-mode)
+    :mode (("README\\.md\\'" . gfm-mode)
+           ("\\.md\\'" . markdown-mode)
+           ("\\.markdown\\'" . markdown-mode))
+    :init (setq markdown-command "pandoc"))
+
   ;; My personalized shortcuts:
-  (global-set-key [f5] 'counsel-compile)
-  ;; TODO: move both to projectile (global-set-key [f6] 'test)
+  (global-set-key [f5] 'projectile-compile-project)
+  (global-set-key [S-f5] 'projectile-run-project)
+  (global-set-key [f6] 'projectile-test-project)
+  (global-set-key [S-f6] 'projectile-regenerate-tags)
   )
 
 ;; The next macro ignores error if there is no windows on the left.
@@ -421,6 +468,30 @@ The function wraps a function FN with `ignore-errors' macro."
   :bind (:map projectile-mode-map
               ("s-p" . projectile-command-map)
               ("C-c p" . projectile-command-map)))
+
+;; Counsel Projectile.
+;; I have this disabled because I use C-c commands for counsel. I use Projectile
+;; commands for having immediately output in a separate window.
+;; (use-package counsel-projectile
+;;  :config
+;;  (counsel-projectile-mode)
+;;  :after projectile)
+
+;; ag and rg packages to support projectile.
+(use-package ag
+  :commands ag ag-files ag-regexp ag-project ag-project-files ag-project-regexp ag-dired ag-dired-regexp ag-project-dired ag-project-dired-regexp
+  :after projectile)
+(use-package rg
+  :custom
+  (rg-keymap-prefix "\C-cS")
+  :commands rg rg-menu
+  :config
+  (rg-enable-default-bindings)
+  (rg-enable-menu)
+  :bind-keymap
+  ("C-c S" . rg-global-map)
+  :after projectile)
+
 
 ;; Enable spelling and flycheck everywhere.
 (add-hook 'text-mode-hook #'flyspell-mode)
@@ -480,6 +551,30 @@ The function wraps a function FN with `ignore-errors' macro."
 
 ;; Overwrite what is currently selected.
 (delete-selection-mode 1)
+
+;; Highlight Delimiters
+(use-package rainbow-delimiters
+  :commands rainbow-delimiters-mode
+  :functions color-saturate-name
+  :config
+  (require 'cl-lib)
+  (require 'color)
+  (cl-loop
+   for index from 1 to rainbow-delimiters-max-face-count
+   do
+   (let ((face (intern (format "rainbow-delimiters-depth-%d-face" index))))
+     (cl-callf color-saturate-name (face-foreground face) 30)))
+  :hook(
+        (prog-mode . rainbow-delimiters-mode)
+        (text-mode . rainbow-delimiters-mode)))
+
+;; Show Hex Color Codes
+(use-package rainbow-mode
+  :commands rainbow-mode
+  :diminish
+  :hook (
+         (web-mode . rainbow-mode)
+         (css-mode . rainbow-mode)))
 
 ;; My personalized shortcuts:
 (global-set-key [kp-left] 'backward-sexp)
