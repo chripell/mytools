@@ -594,6 +594,13 @@
  :diminish subword-mode
  :diminish auto-fill-function)
 
+;; magit
+;; I get errors if I defer this. Investigate.
+(use-package magit
+  :demand
+  :bind (("C-x g" . magit-status)
+         ("C-x C-g" . magit-status)))
+
 ;; ivy & C for fancy M-X and friends completion.
 (use-package ivy
   :demand
@@ -721,13 +728,6 @@
   (set-face-attribute 'flycheck-posframe-warning-face nil :inherit 'flycheck-error-list-warning)
   (set-face-attribute 'flycheck-posframe-error-face nil :inherit 'flycheck-error-list-error)
   :hook (flycheck-mode . flycheck-posframe-mode))
-
-;; magit
-;; I get errors if I defer this.
-(use-package magit
-  :demand
-  :bind (("C-x g" . magit-status)
-         ("C-x C-g" . magit-status)))
 
 ;; Default font
 (setq default-frame-alist '((font . "S0urce Code Pro-12")))
