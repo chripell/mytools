@@ -82,7 +82,7 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
+   '(rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -595,7 +595,7 @@
  :diminish auto-fill-function)
 
 ;; magit
-;; I get errors if I defer this. Investigate.
+;; I get errors if I defer this.
 (use-package magit
   :demand
   :bind (("C-x g" . magit-status)
@@ -1029,7 +1029,7 @@ The function wraps a function FN with `ignore-errors' macro."
 ;; Overwrite what is currently selected.
 (delete-selection-mode 1)
 
-;; Highlight Delimiters
+;; Highlight Delimiters.
 (use-package rainbow-delimiters
   :commands rainbow-delimiters-mode
   :functions color-saturate-name
@@ -1045,13 +1045,27 @@ The function wraps a function FN with `ignore-errors' macro."
         (prog-mode . rainbow-delimiters-mode)
         (text-mode . rainbow-delimiters-mode)))
 
-;; Show Hex Color Codes
+;; Show Hex Color Codes.
 (use-package rainbow-mode
   :commands rainbow-mode
   :diminish
   :hook (
          (web-mode . rainbow-mode)
          (css-mode . rainbow-mode)))
+
+;; Have ediff in a single frame.
+(use-package ediff
+  :commands ediff ediff-files ediff-buffers ediff-backup ediff-current-file ediff-directories ediff-revision ediff-patch-file ediff-patch-buffer ediff-merge ediff-merge-buffers-with-ancestor
+  :init
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+  :config
+  (setq diff-switches "-u"
+        ediff-custom-diff-options "-U3"
+        ediff-split-window-function 'split-window-horizontally
+        ediff-window-setup-function 'ediff-setup-windows-plain)
+  :hook ((ediff-startup . ediff-toggle-wide-display)
+         (ediff-cleanup . ediff-toggle-wide-display)
+         (ediff-suspend . ediff-toggle-wide-display)))
 
 ;; My personalized shortcuts:
 (global-set-key [kp-left] 'backward-sexp)
