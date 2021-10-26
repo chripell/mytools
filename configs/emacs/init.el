@@ -598,6 +598,9 @@
 ;; I get errors if I defer this.
 (use-package magit
   :demand
+  :defines magit-bind-magit-project-status
+  :config
+  (setq magit-bind-magit-project-status nil)
   :bind (("C-x g" . magit-status)
          ("C-x C-g" . magit-status)))
 
