@@ -595,14 +595,14 @@
  :diminish auto-fill-function)
 
 ;; magit
-;; I get errors if I defer this.
 (use-package magit
-  :demand
   :defines magit-bind-magit-project-status
   :config
+  ;; This is needed to avoid a bug with project.el integration.
   (setq magit-bind-magit-project-status nil)
   :bind (("C-x g" . magit-status)
-         ("C-x C-g" . magit-status)))
+         ("C-x M-g" . magit-dispatch)
+         ("C-c M-g" . magit-file-dispatch)))
 
 ;; ivy & C for fancy M-X and friends completion.
 (use-package ivy
