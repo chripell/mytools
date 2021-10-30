@@ -1,0 +1,7 @@
+pulsemixer  --get-volume --id 0
+setxkbmap -layout 'us(intl)'
+xmodmap ~/.Xmodmap
+/usr/bin/dispwin -I /home/chri/icc/current.icc
+discord --start-minimized &
+exec startxfce4
+

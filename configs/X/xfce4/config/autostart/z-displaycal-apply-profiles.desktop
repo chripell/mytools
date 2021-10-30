@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Type=Application
+Name=DisplayCAL ICC Profile Loader
+Comment=Sets ICC profiles and loads calibration curves for all configured display devices
+Icon=displaycal-apply-profiles
+Exec=displaycal-apply-profiles
+Terminal=false
