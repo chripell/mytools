@@ -578,7 +578,7 @@
 ;; UTF-8 all the way!
 (set-default-coding-systems 'utf-8)
 
-;;; Prevent Extraneous Tabs
+;;; Prevent Extraneous Tabs.
 (setq-default indent-tabs-mode nil)
 
 ;; Allow disable showing on modeline with :diminish tag
@@ -594,7 +594,16 @@
  :diminish subword-mode
  :diminish auto-fill-function)
 
-;; magit
+;; Enable easy-gpg.
+(use-package epa
+  :config
+  ;; Let Emacs query the passphrase through the minibuffer
+  ;; Add 'allow-loopback-pinentry' to ~/.gnupg/gpg-agent.conf
+  (setq epg-pinentry-mode 'loopback)
+  (require 'epa-file)
+  (epa-file-enable))
+
+;; magit.
 (use-package magit
   :defines magit-bind-magit-project-status
   :commands magit-process-git
@@ -603,7 +612,10 @@
   (setq magit-bind-magit-project-status nil)
   :bind (("C-x g" . magit-status)
          ("C-x M-g" . magit-dispatch)
-         ("C-c M-g" . magit-file-dispatch)))
+         ("C-c M-g" . magit-file-dispatch)
+         ("s-m" . magit-file-dispatch)))
+(use-package forge
+  :after magit)
 
 ;; ivy & C for fancy M-X and friends completion.
 (use-package ivy
