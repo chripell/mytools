@@ -597,6 +597,7 @@
 ;; magit
 (use-package magit
   :defines magit-bind-magit-project-status
+  :commands magit-process-git
   :config
   ;; This is needed to avoid a bug with project.el integration.
   (setq magit-bind-magit-project-status nil)
