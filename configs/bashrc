@@ -18,21 +18,17 @@ export GOPATH=$HOME/go
 export PATH=$GOPATH/bin:$PATH
 export GO111MODULE=on
 
-export PATH=$PATH:/mnt/scratch/android/android-sdk-linux/tools:/mnt/scratch/android/android-sdk-linux/platform-tools
-
 export WINEPREFIX=$HOME/win64
 export WINEARCH=win64
 
 export PATH=$PATH:$HOME/.local/bin
 
+# Bracket/safe paste mode?
 printf "\e[?2004l"
 
 if [[ -n "`which luarocks 2>/dev/null`" ]]; then
     eval `luarocks path --bin --lua-version 5.3`
 fi
-
-export WORKON_HOME=~/python-virtual-environments
-source /usr/bin/virtualenvwrapper_lazy.sh
 
 # https://www.virtualbox.org/ticket/13653
 CR_RENDER_FORCE_PRESENT_MAIN_THREAD=0
@@ -53,3 +49,22 @@ alias tpm2pkcs11-tool="pkcs11-tool --module /usr/lib/pkcs11/libtpm2_pkcs11.so"
 
 # ncdu, some color please :-)
 alias ncdu="ncdu --color dark"
+
+# kubectl completion
+source <(kubectl completion bash)
+
+function path_remove {
+  # Delete path by parts so we can never accidentally remove sub paths
+  PATH=${PATH//":$1:"/":"} # delete any instances in the middle
+  PATH=${PATH/#"$1:"/} # delete any instance at the beginning
+  PATH=${PATH/%":$1"/} # delete any instance in the at the end
+}
+
+if [[ ! -z $DISPLAY ]]; then
+    # Python virtualenv setup
+    path_remove /home/chri/python-virtual-environments/astro/bin
+    export WORKON_HOME=~/python-virtual-environments
+    source /usr/bin/virtualenvwrapper_lazy.sh
+    workon astro
+fi
+
