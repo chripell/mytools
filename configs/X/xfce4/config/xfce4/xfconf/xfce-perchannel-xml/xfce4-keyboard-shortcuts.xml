@@ -38,7 +38,6 @@
       <property name="&lt;Alt&gt;F2" type="string" value="xfce4-appfinder --collapsed">
         <property name="startup-notify" type="bool" value="true"/>
       </property>
-      <property name="XF86Display" type="string" value="xfce4-display-settings --minimal"/>
       <property name="&lt;Primary&gt;Escape" type="string" value="xfdesktop --menu"/>
       <property name="override" type="bool" value="true"/>
       <property name="&lt;Primary&gt;&lt;Alt&gt;q" type="string" value="xflock4"/>
@@ -127,12 +126,10 @@
       <property name="&lt;Alt&gt;F9" type="string" value="hide_window_key"/>
       <property name="&lt;Alt&gt;F8" type="string" value="resize_window_key"/>
       <property name="Escape" type="string" value="cancel_key"/>
-      <property name="&lt;Primary&gt;F11" type="string" value="workspace_11_key"/>
       <property name="&lt;Alt&gt;F11" type="string" value="fullscreen_key"/>
       <property name="Right" type="string" value="right_key"/>
       <property name="Down" type="string" value="down_key"/>
       <property name="&lt;Alt&gt;F7" type="string" value="move_window_key"/>
-      <property name="&lt;Primary&gt;F12" type="string" value="workspace_12_key"/>
       <property name="&lt;Primary&gt;&lt;Alt&gt;Left" type="string" value="left_workspace_key"/>
       <property name="override" type="bool" value="true"/>
       <property name="&lt;Alt&gt;F5" type="string" value="maximize_window_key"/>
