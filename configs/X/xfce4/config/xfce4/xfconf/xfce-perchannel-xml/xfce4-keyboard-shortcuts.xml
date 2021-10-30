@@ -52,6 +52,7 @@
       <property name="&lt;Primary&gt;&lt;Alt&gt;s" type="string" value="/usr/bin/xfce4-settings-manager"/>
       <property name="Mail" type="string" value="/opt/google/chrome/google-chrome --profile-directory=Default --app-id=fmgjjmmmlfnkbppncabfkddbjimcfncm"/>
       <property name="Print" type="string" value="/usr/bin/xfce4-screenshooter"/>
+      <property name="&lt;Primary&gt;&lt;Alt&gt;l" type="string" value="xflock4"/>
     </property>
   </property>
   <property name="xfwm4" type="empty">

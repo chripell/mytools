@@ -77,7 +77,7 @@
     <property name="plugin-11" type="string" value="xfce4-clipman-plugin"/>
     <property name="plugin-10" type="string" value="pulseaudio">
       <property name="enable-keyboard-shortcuts" type="bool" value="true"/>
-      <property name="mpris-players" type="string" value="chromium.instance2399;vlc"/>
+      <property name="mpris-players" type="string" value="chromium.instance2399;chromium.instance7090;vlc"/>
     </property>
     <property name="plugin-13" type="string" value="notification-plugin"/>
     <property name="plugin-16" type="string" value="windowmenu"/>
