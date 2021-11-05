@@ -5,6 +5,7 @@
     <property name="known_applications" type="array">
       <value type="string" value="google-chrome"/>
       <value type="string" value="netlink-notify"/>
+      <value type="string" value="notify-send"/>
       <value type="string" value="udiskie"/>
       <value type="string" value="Xfce volume control"/>
       <value type="string" value="xfdesktop"/>

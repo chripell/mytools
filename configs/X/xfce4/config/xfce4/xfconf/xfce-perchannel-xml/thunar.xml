@@ -16,7 +16,7 @@
   <property name="last-side-pane" type="string" value="ThunarTreePane"/>
   <property name="last-show-hidden" type="bool" value="true"/>
   <property name="last-details-view-zoom-level" type="string" value="THUNAR_ZOOM_LEVEL_38_PERCENT"/>
-  <property name="last-details-view-column-widths" type="string" value="50,182,50,50,1934,50,50,69,66,204"/>
+  <property name="last-details-view-column-widths" type="string" value="50,182,50,50,2077,50,50,63,66,67"/>
   <property name="last-sort-column" type="string" value="THUNAR_COLUMN_NAME"/>
   <property name="last-sort-order" type="string" value="GTK_SORT_ASCENDING"/>
   <property name="misc-directory-specific-settings" type="bool" value="true"/>

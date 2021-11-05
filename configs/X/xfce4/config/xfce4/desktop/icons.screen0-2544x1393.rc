@@ -5,17 +5,13 @@
 row=11
 col=13
 
-[/home/chri/Desktop/chrome-obbmkcinjjhopbhodfhlampibkjakmhf-Default.desktop]
-row=2
-col=4
-
-[/home/chri/Desktop/WinJUPOS 10.3.9.desktop]
-row=12
-col=15
-
 [/home/chri/Desktop/chrome-aokijcnhdifpmcadcjopeodeiimlklgm-Default.desktop]
 row=0
 col=3
+
+[/home/chri/Desktop/chrome-obbmkcinjjhopbhodfhlampibkjakmhf-Default.desktop]
+row=2
+col=4
 
 [/home/chri/Desktop/Oracle VM VirtualBox.desktop]
 row=0
@@ -41,13 +37,17 @@ col=15
 row=11
 col=14
 
+[/home/chri/Desktop/chrome-mdpkiolbdkhdjpekfbkbmhigcaggjagi-Default.desktop]
+row=2
+col=3
+
 [/home/chri/Desktop/DeepSkyStacker (64 bit).desktop]
 row=12
 col=13
 
-[/home/chri/Desktop/chrome-mdpkiolbdkhdjpekfbkbmhigcaggjagi-Default.desktop]
-row=2
-col=3
+[/home/chri/Desktop/Aladin.desktop]
+row=1
+col=7
 
 [/home/chri/Desktop/chrome-fmgjjmmmlfnkbppncabfkddbjimcfncm-Default.desktop]
 row=1
@@ -56,6 +56,22 @@ col=4
 [/home/chri/Desktop/DeepSkyStacker Live (64 bit).desktop]
 row=12
 col=14
+
+[/home/chri/Desktop/ASIStudio.desktop]
+row=2
+col=7
+
+[/home/chri/Desktop/ASTAP.desktop]
+row=2
+col=6
+
+[/home/chri/Desktop/Blender.desktop]
+row=1
+col=6
+
+[/home/chri/Desktop/WinJUPOS 10.3.9.desktop]
+row=12
+col=15
 
 [/home/chri/Desktop/ph]
 row=0
