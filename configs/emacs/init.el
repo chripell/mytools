@@ -981,9 +981,8 @@ The function wraps a function FN with `ignore-errors' macro."
   :config
   (rg-enable-default-bindings)
   (rg-enable-menu)
-  :bind-keymap
-  ("C-c S" . rg-global-map)
-  :after projectile)
+  :bind ("C-c C-s" . rg-menu)
+  :bind-keymap ("C-c S" . rg-global-map))
 
 
 ;; Enable spelling and flycheck everywhere.
