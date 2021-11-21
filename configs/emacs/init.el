@@ -5,12 +5,10 @@
 ;;; Code:
 
 ;;; Load machine specific initialization. It is expected to define as t/nil:
-;;; chri/proglang
-;;; chri/notmuch
-;;; chri/projectile-global
 (defvar chri/proglang)
 (defvar chri/notmuch)
 (defvar chri/projectile-global)
+(defvar chri/enable-tabnine)
 (require 'init-mach "~/.emacs.d/init-mach.el")
 
 ;; Optimizations for LSP mode (run lsp-doctor):
@@ -82,7 +80,7 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
+   '(company-tabnine rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -912,6 +910,18 @@
            ("\\.md\\'" . markdown-mode)
            ("\\.markdown\\'" . markdown-mode))
     :init (setq markdown-command "pandoc"))
+
+  (when chri/enable-tabnine
+    ;; Tabnine for AI completion
+    (use-package company-tabnine)
+    (defun chri/tabnine-off ()
+      "turn off TabNine for this buffer"
+      (interactive)
+      (setq-local company-backends (delete 'company-tabnine company-backends)))
+    (defun chri/tabnine-on ()
+      "turn on TabNine for this buffer"
+      (interactive)
+      (setq-local company-backends (add-to-list 'company-backends 'company-tabnine))))
 
   ;; My personalized shortcuts:
   (global-set-key [f5] 'projectile-compile-project)
