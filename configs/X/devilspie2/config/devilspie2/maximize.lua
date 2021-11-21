@@ -12,6 +12,7 @@ if ((get_window_class()=="Gnome-terminal" or
      get_window_class()=="Hexchat" or
      get_window_class()=="Evince" or
      get_window_class()=="Geeqie" or
+     get_window_class()=="Nyxt" or
      get_window_class()=="Google-chrome")
     and (not get_window_is_maximized() and get_window_type()=="WINDOW_TYPE_NORMAL" )) then
    maximize()

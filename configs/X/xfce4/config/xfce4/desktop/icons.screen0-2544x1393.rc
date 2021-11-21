@@ -1,10 +1,6 @@
 [xfdesktop-version-4.10.3+-rcfile_format]
 4.10.3+=true
 
-[/home/chri/Desktop/RegiStax 6.desktop]
-row=11
-col=13
-
 [/home/chri/Desktop/chrome-aokijcnhdifpmcadcjopeodeiimlklgm-Default.desktop]
 row=0
 col=3
@@ -12,6 +8,18 @@ col=3
 [/home/chri/Desktop/chrome-obbmkcinjjhopbhodfhlampibkjakmhf-Default.desktop]
 row=2
 col=4
+
+[/home/chri/Desktop/RegiStax 6.desktop]
+row=11
+col=13
+
+[/home/chri/Desktop/Firefox.desktop]
+row=0
+col=9
+
+[/home/chri/Desktop/Nyxt.desktop]
+row=0
+col=10
 
 [/home/chri/Desktop/Oracle VM VirtualBox.desktop]
 row=0
@@ -41,13 +49,13 @@ col=14
 row=2
 col=3
 
-[/home/chri/Desktop/DeepSkyStacker (64 bit).desktop]
-row=12
-col=13
-
 [/home/chri/Desktop/Aladin.desktop]
 row=1
 col=7
+
+[/home/chri/Desktop/DeepSkyStacker (64 bit).desktop]
+row=12
+col=13
 
 [/home/chri/Desktop/chrome-fmgjjmmmlfnkbppncabfkddbjimcfncm-Default.desktop]
 row=1

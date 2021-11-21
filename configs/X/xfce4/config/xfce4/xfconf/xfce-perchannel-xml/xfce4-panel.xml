@@ -53,6 +53,7 @@
         <value type="string" value="udiskie"/>
       </property>
       <property name="known-items" type="array">
+        <value type="string" value="cura"/>
         <value type="string" value="vlc"/>
         <value type="string" value="steam"/>
         <value type="string" value="chrome_status_icon_1"/>
@@ -77,7 +78,7 @@
     <property name="plugin-11" type="string" value="xfce4-clipman-plugin"/>
     <property name="plugin-10" type="string" value="pulseaudio">
       <property name="enable-keyboard-shortcuts" type="bool" value="true"/>
-      <property name="mpris-players" type="string" value="chromium.instance1348;chromium.instance1356;chromium.instance1364;chromium.instance1370;chromium.instance1432;chromium.instance2399;chromium.instance7090;vlc"/>
+      <property name="mpris-players" type="string" value="chromium.instance11602;chromium.instance1177;chromium.instance1341;chromium.instance1348;chromium.instance1354;chromium.instance1356;chromium.instance1360;chromium.instance1364;chromium.instance1370;chromium.instance1432;chromium.instance1440;chromium.instance2399;chromium.instance6480;chromium.instance7090;chromium.instance8846;chromium.instance9123;vlc"/>
     </property>
     <property name="plugin-13" type="string" value="notification-plugin"/>
     <property name="plugin-16" type="string" value="windowmenu"/>
