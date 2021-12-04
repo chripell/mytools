@@ -9,6 +9,7 @@
 (defvar chri/notmuch)
 (defvar chri/projectile-global)
 (defvar chri/enable-tabnine)
+(defvar chri/prefer-eglot)
 (require 'init-mach "~/.emacs.d/init-mach.el")
 
 ;; Optimizations for LSP mode (run lsp-doctor):
@@ -80,7 +81,7 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(company-tabnine rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
+   '(js2-mode eglot company-tabnine rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -766,33 +767,63 @@
     (which-key-mode))
   ;; chri/proglang branch:
 
-  ;; LSP mode.
-  (use-package lsp-mode
-    :init
-    (setq lsp-keymap-prefix "s-l")
-    :hook ((python-mode . lsp)
-           (c++-mode . lsp)
-           (c-mode .lsp)
-           (go-mode . lsp))
-    ;; rebind C-M-.
-    :bind (:map lsp-mode-map ("C-M-." . lsp-find-references))
-    :commands lsp)
-  (use-package lsp-ivy
-    :after lsp-mode)
-  (use-package lsp-ui
-    :commands lsp-ui-mode
-    :after lsp-mode)
-  (use-package lsp-treemacs
-    :after lsp-mode
-    :commands lsp-treemacs-errors-list
-    :bind (:map lsp-mode-map
-                ("s-t s" . lsp-treemacs-symbols)
-                ("s-t r" . lsp-treemacs-references)))
-  (use-package dap-mode
-    :defer t
-    :after lsp-mode
-    :init
-    (require 'dap-python))
+  (if chri/prefer-eglot
+      ;; eglot mode.
+      (use-package eglot
+        :commands (eglot eglot-ensure)
+        :hook ((swift-mode . eglot-ensure)
+               (rust-mode . eglot-ensure)
+               (c-mode . eglot-ensure)
+               (c++-mode . eglot-ensure)
+               (python-mode . eglot-ensure)
+               (js2-mode . eglot-ensure)
+               (go-mode . eglot-ensure)
+               (obc-c-mode . eglot-ensure))
+        :config
+        (when chri/enable-tabnine
+          (add-to-list 'eglot-stay-out-of 'company))
+        (define-key eglot-mode-map (kbd "s-e r") 'eglot-rename)
+        (define-key eglot-mode-map (kbd "s-e f") 'eglot-format)
+        (define-key eglot-mode-map (kbd "s-e G") 'eglot-format-buffer)
+        (define-key eglot-mode-map (kbd "s-e o") 'eglot-code-action-organize-imports)
+        (define-key eglot-mode-map (kbd "s-e a") 'eglot-code-actions)
+        (define-key eglot-mode-map (kbd "s-e q") 'eglot-code-action-quickfix)
+        (define-key eglot-mode-map (kbd "s-e h") 'eldoc)
+        (define-key eglot-mode-map (kbd "s-e x") 'xref-find-references)
+        (define-key eglot-mode-map (kbd "C-M-.") 'xref-find-references)
+        (define-key eglot-mode-map (kbd "s-e t") 'eglot-find-typeDefinition)
+        (define-key eglot-mode-map (kbd "s-e i") 'eglot-find-implementation)
+        (define-key eglot-mode-map (kbd "s-e d") 'eglot-find-declaration)
+        (define-key eglot-mode-map (kbd "s-e R") 'eglot-reconnect)
+        (define-key eglot-mode-map (kbd "s-e S") 'eglot-shutdown-all))
+
+    ;; LSP mode.
+    (use-package lsp-mode
+      :init
+      (setq lsp-keymap-prefix "s-l")
+      :hook ((python-mode . lsp)
+             (c++-mode . lsp)
+             (c-mode .lsp)
+             (go-mode . lsp))
+      ;; rebind C-M-.
+      :bind (:map lsp-mode-map ("C-M-." . lsp-find-references))
+      :commands lsp)
+    (use-package lsp-ivy
+      :after lsp-mode)
+    (use-package lsp-ui
+      :commands lsp-ui-mode
+      :after lsp-mode)
+    (use-package lsp-treemacs
+      :after lsp-mode
+      :commands lsp-treemacs-errors-list
+      :bind (:map lsp-mode-map
+                  ("s-t s" . lsp-treemacs-symbols)
+                  ("s-t r" . lsp-treemacs-references)))
+    (use-package dap-mode
+      :defer t
+      :after lsp-mode
+      :init
+      (require 'dap-python)))
 
   ;; Enable which-key for learing new keybindings:
   (use-package which-key
@@ -811,8 +842,20 @@
     :hook (lua-mode . turn-on-font-lock))
 
   ;; Javascript mode.
-  ;; (use-package js-mode
-  ;;  :mode "\\.js\\'")
+  (use-package js2-mode
+    :mode
+    (("\\.js\\'" . js2-mode))
+    :custom
+    (js2-include-node-externs t)
+    (js2-global-externs '("window" "module" "require" "buster" "sinon" "assert" "refute" "setTimeout" "clearTimeout" "setInterval" "clearInterval" "location" "__dirname" "console" "JSON" "jQuery" "$"))
+    (js2-highlight-level 3)
+    (js2r-prefer-let-over-var t)
+    (js2r-prefered-quote-type 2)
+    (js-indent-align-list-continuation t)
+    (global-auto-highlight-symbol-mode t)
+    :config
+    (setq js-indent-level 2))
+
 
   ;; Python mode.
   (use-package python
@@ -839,7 +882,8 @@
        Make sure you don't have other gofmt/goimports hooks enabled."
       (add-hook 'before-save-hook 'lsp-format-buffer t t)
       (add-hook 'before-save-hook 'lsp-organize-imports t t))
-    (add-hook 'go-mode 'chri/lsp-go-install-save-hooks)
+    (unless chri/prefer-eglot
+      (add-hook 'go-mode 'chri/lsp-go-install-save-hooks))
     :mode "\\.go\\'")
   (use-package go-playground
     :if (executable-find "go")
@@ -857,7 +901,10 @@
     :init
     (setq ccls-executable "/usr/bin/ccls")
     :hook ((c-mode c++-mode objc-mode) .
-         (lambda () (require 'ccls) (lsp))))
+           (lambda ()
+             (require 'ccls)
+             (unless chri/prefer-eglot
+               (lsp)))))
 
   ;; bpftrace mode
   (use-package bpftrace-mode
@@ -896,8 +943,9 @@
     (setq auto-mode-alist (delete '("\\.rs\\'" . rust-mode) auto-mode-alist)))
 
   ;; dart/flutter
-  (use-package lsp-dart
-    :hook (dart-mode . lsp))
+  (unless chri/prefer-eglot
+    (use-package lsp-dart
+      :hook (dart-mode . lsp)))
 
   ;; devicetree mode
   (use-package dts-mode
@@ -913,7 +961,9 @@
 
   (when chri/enable-tabnine
     ;; Tabnine for AI completion
-    (use-package company-tabnine)
+    (customize-set-variable 'lsp-completion-provider :none)
+    (use-package company-tabnine
+      :hook (python-mode . chri/tabnine-on))
     (defun chri/tabnine-off ()
       "turn off TabNine for this buffer"
       (interactive)
@@ -1091,6 +1141,9 @@ The function wraps a function FN with `ignore-errors' macro."
   :hook ((ediff-startup . ediff-toggle-wide-display)
          (ediff-cleanup . ediff-toggle-wide-display)
          (ediff-suspend . ediff-toggle-wide-display)))
+
+;; Enable imenu
+(add-hook 'prog-mode-hook 'imenu-add-menubar-index)
 
 ;; My personalized shortcuts:
 (global-set-key [kp-left] 'backward-sexp)
