@@ -67,6 +67,7 @@
  '(custom-enabled-themes '(deeper-blue))
  '(debug-on-error nil)
  '(dired-auto-revert-buffer t)
+ '(eldoc-documentation-strategy 'eldoc-documentation-compose)
  '(eldoc-echo-area-use-multiline-p t)
  '(eldoc-minor-mode-string nil)
  '(elpy-eldoc-show-current-function nil)
@@ -81,10 +82,13 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(js2-mode eglot company-tabnine rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
+   '(counsel-gtags gtags js2-mode eglot company-tabnine rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
+ '(safe-local-variable-values
+   '((projectile-project-compilation-cmd . "make LLVM=1 CC=\"ccache clang\" -j4 && make LLVM=1 bzImage CC=\"ccache clang\" -j4")
+     (projectile-project-compilation-cmd . "make CC=\"ccache gcc\" -j4 && make bzImage CC=\"ccache gcc\" -j4")))
  '(save-place t nil (saveplace))
  '(scroll-bar-mode 'right)
  '(set-mark-command-repeat-pop t)
@@ -780,7 +784,9 @@
                (python-mode . eglot-ensure)
                (js2-mode . eglot-ensure)
                (go-mode . eglot-ensure)
-               (obc-c-mode . eglot-ensure))
+               (obc-c-mode . eglot-ensure)
+               ;; Show all documentations, in practice both definitions and errors.
+               (eglot-managed-mode . (lambda () (setq eldoc-documentation-strategy 'eldoc-documentation-compose))))
         :config
         (when chri/enable-tabnine
           (add-to-list 'eglot-stay-out-of 'company))
@@ -898,14 +904,14 @@
     :hook (go-mode . go-guru-hl-identifier-mode))
 
   ;; C/C++:
-  (use-package ccls
-    :defer t
-    :init
-    (setq ccls-executable "/usr/bin/ccls")
-    :hook ((c-mode c++-mode objc-mode) .
-           (lambda ()
-             (require 'ccls)
-             (unless chri/prefer-eglot
+  (unless chri/prefer-eglot
+    (use-package ccls
+      :defer t
+      :init
+      (setq ccls-executable "/usr/bin/ccls")
+      :hook ((c-mode c++-mode objc-mode) .
+             (lambda ()
+               (require 'ccls)
                (lsp)))))
 
   ;; bpftrace mode
@@ -965,7 +971,8 @@
     ;; Tabnine for AI completion
     (customize-set-variable 'lsp-completion-provider :none)
     (use-package company-tabnine
-      :hook (python-mode . chri/tabnine-on))
+      :hook ((python-mode . chri/tabnine-on)
+             (c-mode . chri/tabnine-on)))
     (defun chri/tabnine-off ()
       "turn off TabNine for this buffer"
       (interactive)
@@ -1146,6 +1153,22 @@ The function wraps a function FN with `ignore-errors' macro."
 
 ;; Enable imenu
 (add-hook 'prog-mode-hook 'imenu-add-menubar-index)
+
+;; Don't warn about large files.
+(setq large-file-warning-threshold nil)
+
+;; Gtags
+(use-package counsel-gtags
+  :bind (("C-c C-t d" . counsel-gtags-find-definition)
+         ("C-c C-t r" . counsel-gtags-find-reference)
+         ("C-c C-t s" . counsel-gtags-find-symbol)
+         ("C-c C-t f" . counsel-gtags-find-file)
+         ("C-c C-t C-b" . counsel-gtags-go-backward)
+         ("C-c C-t C-f" . counsel-gtags-go-forward)
+         ("C-c C-t C" . counsel-gtags-create-tags)
+         ("C-c C-t U" . counsel-gtags-update-tags)
+         ("C-c C-t j" . counsel-gtags-dwim)
+         ("C-c C-t a" . tags-apropos)))
 
 ;; My personalized shortcuts:
 (global-set-key [kp-left] 'backward-sexp)
