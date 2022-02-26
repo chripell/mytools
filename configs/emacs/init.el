@@ -1004,13 +1004,16 @@ The function wraps a function FN with `ignore-errors' macro."
   (global-set-key [M-right] (chri/ignore-error-wrapper 'windmove-right))
   (global-set-key [M-up] (chri/ignore-error-wrapper 'windmove-up))
   (global-set-key [M-down] (chri/ignore-error-wrapper 'windmove-down))
-  (defun windmove-python ()
-    "Redefines keys in Python mode for windmove"
-    (define-key elpy-mode-map [M-left] (chri/ignore-error-wrapper 'windmove-left))
-    (define-key elpy-mode-map [M-right] (chri/ignore-error-wrapper 'windmove-right))
-    (define-key elpy-mode-map [M-up] (chri/ignore-error-wrapper 'windmove-up))
-    (define-key elpy-mode-map [M-down] (chri/ignore-error-wrapper 'windmove-down)))
-  (add-hook 'elpy-mode-hook 'windmove-python)
+  (defun windmove-over (kmap)
+    "Redefines keys for windmove"
+    (define-key kmap [M-left] (chri/ignore-error-wrapper 'windmove-left))
+    (define-key kmap [M-right] (chri/ignore-error-wrapper 'windmove-right))
+    (define-key kmap [M-up] (chri/ignore-error-wrapper 'windmove-up))
+    (define-key kmap [M-down] (chri/ignore-error-wrapper 'windmove-down)))
+  (add-hook 'elpy-mode-hook (lambda () (windmove-over elpy-mode-map)))
+  (add-hook 'org-mode-hook (lambda () (windmove-over org-mode-map)))
+  (add-hook 'c-mode-hook (lambda ()
+                           (define-key c-mode-map (kbd "C-c C-s") `rg-menu)))
   :diminish)
 
 ;; Sound is annoying, just flash the screen on error.
@@ -1169,6 +1172,9 @@ The function wraps a function FN with `ignore-errors' macro."
          ("C-c C-t U" . counsel-gtags-update-tags)
          ("C-c C-t j" . counsel-gtags-dwim)
          ("C-c C-t a" . tags-apropos)))
+
+;; Frame title
+(setq-default frame-title-format '("%b [%m]"))
 
 ;; My personalized shortcuts:
 (global-set-key [kp-left] 'backward-sexp)
