@@ -662,7 +662,6 @@
 	 ("C-c d" . counsel-descbinds)
 	 ("C-c o" . counsel-outline)
 	 ("C-c r" . counsel-rg)
-	 ("C-c C-r" . rg)
 	 ("C-c t" . counsel-load-theme)
 	 ("C-c F" . counsel-org-file))
   :config (counsel-mode))
@@ -670,8 +669,7 @@
   :diminish
   :after ivy
   :bind (("C-s" . swiper)
-         ("C-r" . swiper)
-         ("C-c s" . swiper-all)))
+         ("C-r" . swiper)))
 (use-package ivy-rich
   :diminish
   :after ivy
@@ -1010,7 +1008,9 @@ The function wraps a function FN with `ignore-errors' macro."
     (define-key kmap [M-right] (chri/ignore-error-wrapper 'windmove-right))
     (define-key kmap [M-up] (chri/ignore-error-wrapper 'windmove-up))
     (define-key kmap [M-down] (chri/ignore-error-wrapper 'windmove-down)))
-  (add-hook 'elpy-mode-hook (lambda () (windmove-over elpy-mode-map)))
+  (add-hook 'elpy-mode-hook (lambda ()
+                              (windmove-over elpy-mode-map)
+                              (define-key elpy-mode-map (kbd "C-c C-s") `rg-menu)))
   (add-hook 'org-mode-hook (lambda () (windmove-over org-mode-map)))
   (add-hook 'c-mode-hook (lambda ()
                            (define-key c-mode-map (kbd "C-c C-s") `rg-menu)))
@@ -1048,13 +1048,12 @@ The function wraps a function FN with `ignore-errors' macro."
   :after projectile)
 (use-package rg
   :custom
-  (rg-keymap-prefix "\C-cS")
+  (rg-keymap-prefix "\C-cs")
   :commands rg rg-menu
   :config
   (rg-enable-default-bindings)
-  (rg-enable-menu)
   :bind ("C-c C-s" . rg-menu)
-  :bind-keymap ("C-c S" . rg-global-map))
+  :bind-keymap ("C-c s" . rg-global-map))
 
 
 ;; Enable spelling and flycheck everywhere.
