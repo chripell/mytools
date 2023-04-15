@@ -16,13 +16,6 @@
 (setq gc-cons-threshold 100000000)
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
 
-;; Add ~/elisp/ and sub-directories to load path.
-(if (fboundp 'normal-top-level-add-subdirs-to-load-path)
-    (let* ((my-lisp-dir "~/elisp/")
-	   (default-directory my-lisp-dir))
-      (setq load-path (cons my-lisp-dir load-path))
-      (normal-top-level-add-subdirs-to-load-path)))
-
 ;; Initialize package sources.
 (require 'package)
 (require 'gnutls)
@@ -67,6 +60,7 @@
  '(custom-enabled-themes '(deeper-blue))
  '(debug-on-error nil)
  '(dired-auto-revert-buffer t)
+ '(dired-dwim-target t)
  '(eldoc-documentation-strategy 'eldoc-documentation-compose)
  '(eldoc-echo-area-use-multiline-p t)
  '(eldoc-minor-mode-string nil)
@@ -82,7 +76,7 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(counsel-gtags gtags js2-mode eglot company-tabnine rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
+   '(emacsql-sqlite-module lsp-mode flycheck-rust dumb-jump projectile go-guru go-mode lua-mode which-key flycheck company yasnippet ivy magit scad-mode counsel-gtags gtags js2-mode eglot company-tabnine rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -794,7 +788,7 @@
         (define-key eglot-mode-map (kbd "s-e o") 'eglot-code-action-organize-imports)
         (define-key eglot-mode-map (kbd "s-e a") 'eglot-code-actions)
         (define-key eglot-mode-map (kbd "s-e q") 'eglot-code-action-quickfix)
-        (define-key eglot-mode-map (kbd "s-e h") 'eldoc)
+        (define-key eglot-mode-map (kbd "s-h") 'eldoc)
         (define-key eglot-mode-map (kbd "s-e x") 'xref-find-references)
         (define-key eglot-mode-map (kbd "C-M-.") 'xref-find-references)
         (define-key eglot-mode-map (kbd "s-e t") 'eglot-find-typeDefinition)
@@ -1175,6 +1169,35 @@ The function wraps a function FN with `ignore-errors' macro."
 ;; Frame title
 (setq-default frame-title-format '("%b [%m]"))
 
+;; OpenSCAD mode
+(use-package scad-mode
+  :mode "\\.scad$")
+
+;; Dumb Jump
+(use-package dumb-jump
+  :ensure t
+  :bind (("s-j o" . dumb-jump-go-other-window)
+         ("s-j s-o" . dumb-jump-go-other-window)
+         ("s-j j" . dumb-jump-go)
+         ("s-j s-j" . dumb-jump-go)
+         ("s-j b" . dumb-jump-back)
+         ("s-j s-b" . dumb-jump-back)
+         ("s-j q" . dumb-jump-quick-look)
+         ("s-j s-q" . dumb-jump-quick-look)
+         ("s-j x" . dumb-jump-go-prefer-external)
+         ("s-j s-x" . dumb-jump-go-prefer-external)
+         ("s-j z" . dumb-jump-go-prefer-external-other-window)
+         ("s-j s-z" . dumb-jump-go-prefer-external-other-window))
+  :config (setq dumb-jump-selector 'ivy))
+
+;; Load only if exists
+(defun load-if-exists (fname)
+  "Load if exists."
+ (when (file-exists-p fname)
+   (load-file fname)))
+(load-if-exists "~/elisp/pass.el")
+(load-if-exists "~/git/aide.el/aide.el")
+
 ;; My personalized shortcuts:
 (global-set-key [kp-left] 'backward-sexp)
 (global-set-key [kp-right] 'forward-sexp)
@@ -1190,6 +1213,7 @@ The function wraps a function FN with `ignore-errors' macro."
 (global-set-key [kp-multiply] 'insert-register)
 (global-set-key [kp-subtract] 'point-to-register)
 (global-set-key [kp-add] 'jump-to-register)
+(global-set-key [f2] 'split-window-right)
 (global-set-key [f7] 'delete-other-windows)
 (global-set-key [f8] 'delete-window)
 
