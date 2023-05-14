@@ -26,7 +26,8 @@
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("melpa-stable" . "https://stable.melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")
-                         ("elpa" . "https://elpa.gnu.org/packages/")))
+                         ("elpa" . "https://elpa.gnu.org/packages/")
+                         ("jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/")))
 (package-initialize)
 (when (not package-archive-contents)
   (package-refresh-contents))
@@ -40,6 +41,15 @@
 ;; Make sure packages are downloaded.
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
+
+;; Quelpa adds new ways of downloading packages. Integrate with
+;; use-package with  :quelpa. See https://github.com/quelpa/quelpa-use-package
+(quelpa
+ '(quelpa-use-package
+   :fetcher git
+   :url "https://github.com/quelpa/quelpa-use-package.git"))
+(require 'quelpa-use-package)
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -76,7 +86,7 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(treemacs-magit treemacs-icons-dired treemacs-projectile all-the-icons emacsql-sqlite-module lsp-mode flycheck-rust dumb-jump projectile go-guru go-mode lua-mode which-key flycheck company yasnippet ivy magit scad-mode counsel-gtags gtags js2-mode eglot company-tabnine rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
+   '(gptel chatgpt-shell org-ai c3po quelpa-use-package treemacs-magit treemacs-icons-dired treemacs-projectile all-the-icons emacsql-sqlite-module lsp-mode flycheck-rust dumb-jump projectile go-guru go-mode lua-mode which-key flycheck company yasnippet ivy magit scad-mode counsel-gtags gtags js2-mode eglot company-tabnine rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -1304,6 +1314,84 @@ The function wraps a function FN with `ignore-errors' macro."
    (load-file fname)))
 (load-if-exists "~/elisp/pass.el")
 (load-if-exists "~/git/aide.el/aide.el")
+
+;; OpenAI interfaces, keys are elsewhere
+
+;; see https://github.com/emacs-openai/codegpt
+;; select a region and then M-x codegpt
+(use-package codegpt
+  :ensure t
+  :config
+  ;; For ChatGPT
+  ;; (setq codegpt-tunnel 'chat
+  ;;       codegpt-model "gpt-3.5-turbo")
+  )
+
+;; see https://github.com/emacs-openai/chatgpt
+;; 400 error :-(
+(use-package chatgpt :ensure t)
+
+;; see https://github.com/emacs-openai/dall-e
+(use-package dall-e :ensure t)
+
+;; see https://github.com/antonhibl/gptai
+;; gptai-send-query, gptai-send-query-from-selection. gptai-send-query-from-buffer, gptai-spellcheck-text-from-selection, gptai-elaborate-on-text-from-selection
+;; gptai-send-image-query
+;; gptai-code-query, gptai-code-query-from-selection, gptai-explain-code-from-selection, gptai-fix-code-from-selection, gptai-document-code-from-selection, gptai-optimize-code-from-selection ,gptai-improve-code-from-selection
+;;gptai-turbo-query
+(use-package gptai
+  :ensure t
+  :config
+ (setq gptai-model "text-davinci-003")
+  (setq gptai-username openai-user)
+  (setq gptai-api-key openai-key))
+
+;; see https://github.com/d1egoaz/c3po.el
+;; dev persona: c3po-dev-chat and c3po-reply
+;; explain: c3po-explain-code
+;; writer persona: c3po-chat and c3po-reply
+;; grammar: select region and c3po-correct-grammar+c3po-reply or c3po-correct-grammar-and-replace
+;; rewriting: c3po-rewrite-text, c3po-rewrite-and-replace, and c3po-reply
+;; summarize: c3po-summarize and c3po-reply
+(use-package c3po
+  :quelpa (c3po :fetcher url :url "https://raw.githubusercontent.com/d1egoaz/c3po.el/main/c3po.el")
+  :config
+  (setq c3po-api-key openai-key))
+
+;; see https://github.com/rksm/org-ai
+;; in an org buffer:
+;; #+begin_ai
+;; Is Emacs the greatest editor?
+;; #+end_ai
+;; and C-c C-c
+;; #+begin_ai :image :size 256x256
+;; Hyper realistic sci-fi rendering of super complicated technical machine.
+;; #+end_ai
+(use-package org-ai
+  :ensure t
+  :commands (org-ai-mode
+             org-ai-global-mode)
+  :init
+  (add-hook 'org-mode-hook #'org-ai-mode) ; enable org-ai in org-mode
+  (org-ai-global-mode) ; installs global keybindings on C-c M-a
+  :config
+  (setq org-ai-openai-api-token openai-key)
+  ;; if you are on the gpt-4 beta: (setq org-ai-default-chat-model "gpt-4")
+  (org-ai-install-yasnippets)) ;; if you are using yasnippet and want `ai` snippets
+
+;; see https://github.com/xenodium/chatgpt-shell
+;; chatgpt-shell or dall-e-shell
+(use-package chatgpt-shell
+  :ensure t
+  :config
+  (setq chatgpt-shell-openai-key openai-key))
+
+;; see https://github.com/karthink/gptel
+;; gptel to start, then C-c Ret for defaults ot C-u C-c Ret for custom.
+(use-package gptel
+ :config
+ (setq gptel-api-key openai-key))
+
 
 ;; My personalized shortcuts:
 (global-set-key [kp-left] 'backward-sexp)
