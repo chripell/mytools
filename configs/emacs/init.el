@@ -8,13 +8,7 @@
 (defvar chri/proglang)
 (defvar chri/notmuch)
 (defvar chri/projectile-global)
-(defvar chri/enable-tabnine)
-(defvar chri/prefer-eglot)
 (require 'init-mach "~/.emacs.d/init-mach.el")
-
-;; Optimizations for LSP mode (run lsp-doctor):
-(setq gc-cons-threshold 100000000)
-(setq read-process-output-max (* 1024 1024)) ;; 1mb
 
 ;; Initialize package sources.
 (require 'package)
@@ -57,7 +51,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(auto-coding-regexp-alist
-   '(("^BABYL OPTIONS:[ 	]*-\\*-[ 	]*rmail[ 	]*-\\*-" . no-conversion)
+   '(("^BABYL OPTIONS:[ \11]*-\\*-[ \11]*rmail[ \11]*-\\*-" . no-conversion)
      ("<meta\\b[^>]*\\bcontent=\"text/html; charset=UTF-8\"[^>]*>" . utf-8)
      ("<\\?xml\\b[^>]*\\bencoding=\"utf-8\"[^>]*\\?>" . utf-8)))
  '(bookmark-save-flag 1)
@@ -86,7 +80,7 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(gptel chatgpt-shell org-ai c3po quelpa-use-package treemacs-magit treemacs-icons-dired treemacs-projectile all-the-icons emacsql-sqlite-module lsp-mode flycheck-rust dumb-jump projectile go-guru go-mode lua-mode which-key flycheck company yasnippet ivy magit scad-mode counsel-gtags gtags js2-mode eglot company-tabnine rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
+   '(python-ts dante attrap flymake-hlint flycheck-haskell emacsql-sqlite-module lsp-mode flycheck-rust dumb-jump projectile go-guru go-mode lua-mode which-key flycheck company yasnippet ivy magit scad-mode counsel-gtags gtags js2-mode rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -775,65 +769,35 @@
     (which-key-mode))
   ;; chri/proglang branch:
 
-  (if chri/prefer-eglot
-      ;; eglot mode.
-      (use-package eglot
-        :commands (eglot eglot-ensure)
-        :hook ((swift-mode . eglot-ensure)
-               (rust-mode . eglot-ensure)
-               (c-mode . eglot-ensure)
-               (c++-mode . eglot-ensure)
-               (python-mode . eglot-ensure)
-               (js2-mode . eglot-ensure)
-               (go-mode . eglot-ensure)
-               (obc-c-mode . eglot-ensure)
-               ;; Show all documentations, in practice both definitions and errors.
-               (eglot-managed-mode . (lambda () (setq eldoc-documentation-strategy 'eldoc-documentation-compose))))
-        :config
-        (when chri/enable-tabnine
-          (add-to-list 'eglot-stay-out-of 'company))
-        (define-key eglot-mode-map (kbd "s-e r") 'eglot-rename)
-        (define-key eglot-mode-map (kbd "s-e f") 'eglot-format)
-        (define-key eglot-mode-map (kbd "s-e G") 'eglot-format-buffer)
-        (define-key eglot-mode-map (kbd "s-e o") 'eglot-code-action-organize-imports)
-        (define-key eglot-mode-map (kbd "s-e a") 'eglot-code-actions)
-        (define-key eglot-mode-map (kbd "s-e q") 'eglot-code-action-quickfix)
-        (define-key eglot-mode-map (kbd "s-h") 'eldoc)
-        (define-key eglot-mode-map (kbd "s-e x") 'xref-find-references)
-        (define-key eglot-mode-map (kbd "C-M-.") 'xref-find-references)
-        (define-key eglot-mode-map (kbd "s-e t") 'eglot-find-typeDefinition)
-        (define-key eglot-mode-map (kbd "s-e i") 'eglot-find-implementation)
-        (define-key eglot-mode-map (kbd "s-e d") 'eglot-find-declaration)
-        (define-key eglot-mode-map (kbd "s-e R") 'eglot-reconnect)
-        (define-key eglot-mode-map (kbd "s-e S") 'eglot-shutdown-all))
-
-    ;; LSP mode.
-    (use-package lsp-mode
-      :init
-      (setq lsp-keymap-prefix "s-l")
-      :hook ((python-mode . lsp)
-             (c++-mode . lsp)
-             (c-mode .lsp)
-             (go-mode . lsp))
-      ;; rebind C-M-.
-      :bind (:map lsp-mode-map ("C-M-." . lsp-find-references))
-      :commands lsp)
-    (use-package lsp-ivy
-      :after lsp-mode)
-    (use-package lsp-ui
-      :commands lsp-ui-mode
-      :after lsp-mode)
-    (use-package lsp-treemacs
-      :after lsp-mode
-      :commands lsp-treemacs-errors-list
-      :bind (:map lsp-mode-map
-                  ("s-t s" . lsp-treemacs-symbols)
-                  ("s-t r" . lsp-treemacs-references)))
-    (use-package dap-mode
-      :defer t
-      :after lsp-mode
-      :init
-      (require 'dap-python)))
+  ;; eglot mode.
+  (use-package eglot
+    :commands (eglot eglot-ensure)
+    :hook ((swift-mode . eglot-ensure)
+           (rust-mode . eglot-ensure)
+           (c-mode . eglot-ensure)
+           (c++-mode . eglot-ensure)
+           (python-mode . eglot-ensure)
+           (python-ts-mode . eglot-ensure)
+           (js2-mode . eglot-ensure)
+           (go-mode . eglot-ensure)
+           (obc-c-mode . eglot-ensure)
+           ;; Show all documentations, in practice both definitions and errors.
+           (eglot-managed-mode . (lambda () (setq eldoc-documentation-strategy 'eldoc-documentation-compose))))
+    :config
+    (define-key eglot-mode-map (kbd "s-e r") 'eglot-rename)
+    (define-key eglot-mode-map (kbd "s-e f") 'eglot-format)
+    (define-key eglot-mode-map (kbd "s-e G") 'eglot-format-buffer)
+    (define-key eglot-mode-map (kbd "s-e o") 'eglot-code-action-organize-imports)
+    (define-key eglot-mode-map (kbd "s-e a") 'eglot-code-actions)
+    (define-key eglot-mode-map (kbd "s-e q") 'eglot-code-action-quickfix)
+    (define-key eglot-mode-map (kbd "s-h") 'eldoc)
+    (define-key eglot-mode-map (kbd "s-e x") 'xref-find-references)
+    (define-key eglot-mode-map (kbd "C-M-.") 'xref-find-references)
+    (define-key eglot-mode-map (kbd "s-e t") 'eglot-find-typeDefinition)
+    (define-key eglot-mode-map (kbd "s-e i") 'eglot-find-implementation)
+    (define-key eglot-mode-map (kbd "s-e d") 'eglot-find-declaration)
+    (define-key eglot-mode-map (kbd "s-e R") 'eglot-reconnect)
+    (define-key eglot-mode-map (kbd "s-e S") 'eglot-shutdown-all))
 
   ;; Enable which-key for learing new keybindings:
   (use-package which-key
@@ -841,9 +805,7 @@
     :demand
     :config
     (which-key-setup-side-window-bottom)
-    (which-key-mode)
-    :hook ((lsp-mode . lsp-enable-which-key-integration)
-	   (lsp-mode . which-key-mode)))
+    (which-key-mode))
 
   ;; Lua mode.
   (use-package lua-mode
@@ -886,14 +848,6 @@
   ;; Go mode
   (use-package go-mode
     :config
-    (defun chri/lsp-go-install-save-hooks ()
-      "Go Save hook
-       Set up before-save hooks to format buffer and add/delete imports.
-       Make sure you don't have other gofmt/goimports hooks enabled."
-      (add-hook 'before-save-hook 'lsp-format-buffer t t)
-      (add-hook 'before-save-hook 'lsp-organize-imports t t))
-    (unless chri/prefer-eglot
-      (add-hook 'go-mode 'chri/lsp-go-install-save-hooks))
     :mode "\\.go\\'")
   (use-package go-playground
     :if (executable-find "go")
@@ -904,17 +858,6 @@
   (use-package go-guru
     :if (executable-find "guru")
     :hook (go-mode . go-guru-hl-identifier-mode))
-
-  ;; C/C++:
-  (unless chri/prefer-eglot
-    (use-package ccls
-      :defer t
-      :init
-      (setq ccls-executable "/usr/bin/ccls")
-      :hook ((c-mode c++-mode objc-mode) .
-             (lambda ()
-               (require 'ccls)
-               (lsp)))))
 
   ;; bpftrace mode
   (use-package bpftrace-mode
@@ -952,11 +895,6 @@
     ;; to use rustic-mode even if rust-mode also installed
     (setq auto-mode-alist (delete '("\\.rs\\'" . rust-mode) auto-mode-alist)))
 
-  ;; dart/flutter
-  (unless chri/prefer-eglot
-    (use-package lsp-dart
-      :hook (dart-mode . lsp)))
-
   ;; devicetree mode
   (use-package dts-mode
     :mode "\\.dt[si]\\'")
@@ -969,20 +907,40 @@
            ("\\.markdown\\'" . markdown-mode))
     :init (setq markdown-command "pandoc"))
 
-  (when chri/enable-tabnine
-    ;; Tabnine for AI completion
-    (customize-set-variable 'lsp-completion-provider :none)
-    (use-package company-tabnine
-      :hook ((python-mode . chri/tabnine-on)
-             (c-mode . chri/tabnine-on)))
-    (defun chri/tabnine-off ()
-      "turn off TabNine for this buffer"
-      (interactive)
-      (setq-local company-backends (delete 'company-tabnine company-backends)))
-    (defun chri/tabnine-on ()
-      "turn on TabNine for this buffer"
-      (interactive)
-      (setq-local company-backends (add-to-list 'company-backends 'company-tabnine))))
+  ;; Haskell
+  ;; (use-package haskell-mode
+  ;;   :ensure t
+  ;;   :init
+  ;;   (progn
+  ;;     (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+  ;;     (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+  ;;     (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+  ;;     (setq haskell-process-args-cabal-new-repl
+  ;;           '("--ghc-options=-ferror-spans -fshow-loaded-modules"))
+  ;;     (setq haskell-process-type 'cabal-new-repl)
+  ;;     (setq haskell-stylish-on-save 't)
+  ;;     (setq haskell-tags-on-save 't)
+  ;;     ))
+  ;; (use-package flycheck-haskell
+  ;;   :ensure t
+  ;;   :config
+  ;;   (add-hook 'flycheck-mode-hook #'flycheck-haskell-setup)
+  ;;   (eval-after-load 'haskell-mode-hook 'flycheck-mode))
+  ;; (use-package flymake-hlint
+  ;;   :ensure t
+  ;; :config
+  ;; (add-hook 'haskell-mode-hook 'flymake-hlint-load))
+  (use-package attrap
+    :ensure t)
+  (use-package dante
+    :ensure t
+    :after haskell-mode
+    :commands 'dante-mode
+    :init
+    (add-hook 'haskell-mode-hook 'flycheck-mode)
+    (add-hook 'haskell-mode-hook 'dante-mode)
+    :config
+    (flycheck-add-next-checker 'haskell-dante '(info . haskell-hlint)))
 
   ;; My personalized shortcuts:
   (global-set-key [f5] 'projectile-compile-project)
@@ -1182,6 +1140,35 @@ The function wraps a function FN with `ignore-errors' macro."
 ;; OpenSCAD mode
 (use-package scad-mode
   :mode "\\.scad$")
+
+;; Treesitter
+(setq treesit-language-source-alist
+   '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+     (cmake "https://github.com/uyha/tree-sitter-cmake")
+     (css "https://github.com/tree-sitter/tree-sitter-css")
+     (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+     (go "https://github.com/tree-sitter/tree-sitter-go")
+     (html "https://github.com/tree-sitter/tree-sitter-html")
+     (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+     (json "https://github.com/tree-sitter/tree-sitter-json")
+     (make "https://github.com/alemuller/tree-sitter-make")
+     (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+     (python "https://github.com/tree-sitter/tree-sitter-python")
+     (toml "https://github.com/tree-sitter/tree-sitter-toml")
+     (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+     (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+     (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+;; See https://www.masteringemacs.org/article/how-to-get-started-tree-sitter
+;; (setq major-mode-remap-alist
+;;  '((yaml-mode . yaml-ts-mode)
+;;    (bash-mode . bash-ts-mode)
+;;    (js2-mode . js-ts-mode)
+;;    (typescript-mode . typescript-ts-mode)
+;;    (json-mode . json-ts-mode)
+;;    (css-mode . css-ts-mode)
+;;    (python-mode . python-ts-mode)))
+(setq major-mode-remap-alist
+ '((python-mode . python-ts-mode)))
 
 ;; Dumb Jump
 (use-package dumb-jump
