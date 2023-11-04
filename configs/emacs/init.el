@@ -80,7 +80,7 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(python-ts dante attrap flymake-hlint flycheck-haskell emacsql-sqlite-module lsp-mode flycheck-rust dumb-jump projectile go-guru go-mode lua-mode which-key flycheck company yasnippet ivy magit scad-mode counsel-gtags gtags js2-mode rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
+   '(dired-preview python-ts dante attrap flymake-hlint flycheck-haskell emacsql-sqlite-module lsp-mode flycheck-rust dumb-jump projectile go-guru go-mode lua-mode which-key flycheck company yasnippet ivy magit scad-mode counsel-gtags gtags js2-mode rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -561,6 +561,8 @@
       ("WenQuanYi Zen Hei Mono" "Noto Sans Symbols" "Segoe UI Symbol" "Apple Symbols" "DejaVu Sans:width=condensed" "BabelStone Han" "Symbola" "Quivira" "BabelStone Modern" "Code2000" "Everson Mono:weight=bold"))))
  '(unicode-fonts-debug-availability t)
  '(unicode-fonts-skip-font-groups '(low-quality-glyphs))
+ '(use-dialog-box nil)
+ '(use-file-dialog nil)
  '(warning-suppress-types '((lsp-mode)))
  '(wdired-allow-to-change-permissions t))
 (custom-set-faces
@@ -1398,6 +1400,25 @@ The function wraps a function FN with `ignore-errors' macro."
 (global-set-key [f2] 'split-window-right)
 (global-set-key [f7] 'delete-other-windows)
 (global-set-key [f8] 'delete-window)
+
+;; dired & default commands.
+(setq dired-guess-shell-alist-user
+      (list
+       (list "\\.pdf$" "evince")
+       (list "\\.mp4$" "mpv")
+       (list "\\.mp3$" "mpv")
+       (list "\\.xcf$" "gimp")
+       (list "\\.html$" "firefox")
+       (list "\\.jpg$" "geeqie")))
+;; don't show the *Async shell* buffer.
+(add-to-list 'display-buffer-alist
+             (cons "\\*Async Shell Command\\*.*" (cons #'display-buffer-no-window nil)))
+;; dired-preview-mode
+(use-package dired-preview
+  :config
+  (setq dired-preview-delay 0.2)
+  (setq dired-preview-max-size (expt 2 27))
+  :commands (dired-preview-mode))
 
 ;; Show startup time.
 (defun chri/display-startup-time ()
