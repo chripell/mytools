@@ -762,6 +762,13 @@
   :config
   (unicode-fonts-setup))
 
+;; Always setup elisp
+(use-package lisp-mode
+  :ensure nil
+  :commands emacs-lisp-mode
+  :hook (emacs-lisp-mode . (lambda ()
+                             (yas-global-mode)
+                             (setq company-backends '((company-capf :with company-dabbrev-code company-gtags company-etags company-keywords company-yasnippet company-files))))))
 
 (if (not chri/proglang)
   (use-package which-key
@@ -1406,9 +1413,9 @@ The function wraps a function FN with `ignore-errors' macro."
 (use-package dired
   :ensure nil
   :config
-  (define-key dired-mode-map (kbd "M-z") #'chri/uncompress-from-dired)
+  (define-key dired-mode-map (kbd "M-z") 'chri/uncompress-from-dired)
   (define-key dired-mode-map (kbd "M-p") #'dired-preview-mode)
-  (define-key dired-mode-map (kbd "M-l") #'chri/eww-from-dired)
+  (define-key dired-mode-map (kbd "M-l") 'chri/eww-from-dired)
   (setq dired-guess-shell-alist-user
         (list
          (list "\\.pdf$" "evince")
