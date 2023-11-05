@@ -80,7 +80,7 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(dired-preview python-ts dante attrap flymake-hlint flycheck-haskell emacsql-sqlite-module lsp-mode flycheck-rust dumb-jump projectile go-guru go-mode lua-mode which-key flycheck company yasnippet ivy magit scad-mode counsel-gtags gtags js2-mode rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
+   '(dired dired-preview python-ts dante attrap flymake-hlint flycheck-haskell emacsql-sqlite-module lsp-mode flycheck-rust dumb-jump projectile go-guru go-mode lua-mode which-key flycheck company yasnippet ivy magit scad-mode counsel-gtags gtags js2-mode rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -1303,6 +1303,7 @@ The function wraps a function FN with `ignore-errors' macro."
    (load-file fname)))
 (load-if-exists "~/elisp/pass.el")
 (load-if-exists "~/git/aide.el/aide.el")
+(load-if-exists "~/elisp/chri.el")
 
 ;; OpenAI interfaces, keys are elsewhere
 
@@ -1402,17 +1403,23 @@ The function wraps a function FN with `ignore-errors' macro."
 (global-set-key [f8] 'delete-window)
 
 ;; dired & default commands.
-(setq dired-guess-shell-alist-user
-      (list
-       (list "\\.pdf$" "evince")
-       (list "\\.mp4$" "mpv")
-       (list "\\.mp3$" "mpv")
-       (list "\\.xcf$" "gimp")
-       (list "\\.html$" "firefox")
-       (list "\\.jpg$" "geeqie")))
-;; don't show the *Async shell* buffer.
-(add-to-list 'display-buffer-alist
-             (cons "\\*Async Shell Command\\*.*" (cons #'display-buffer-no-window nil)))
+(use-package dired
+  :ensure nil
+  :config
+  (define-key dired-mode-map (kbd "M-z") #'chri/uncompress-from-dired)
+  (define-key dired-mode-map (kbd "M-p") #'dired-preview-mode)
+  (define-key dired-mode-map (kbd "M-l") #'chri/eww-from-dired)
+  (setq dired-guess-shell-alist-user
+        (list
+         (list "\\.pdf$" "evince")
+         (list "\\.mp4$" "mpv")
+         (list "\\.mp3$" "mpv")
+         (list "\\.xcf$" "gimp")
+         (list "\\.html$" "firefox")
+         (list "\\.jpg$" "geeqie")))
+  ;; don't show the *Async shell* buffer.
+  (add-to-list 'display-buffer-alist
+               (cons "\\*Async Shell Command\\*.*" (cons #'display-buffer-no-window nil))))
 ;; dired-preview-mode
 (use-package dired-preview
   :config
