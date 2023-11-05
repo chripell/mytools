@@ -80,7 +80,7 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(dired dired-preview python-ts dante attrap flymake-hlint flycheck-haskell emacsql-sqlite-module lsp-mode flycheck-rust dumb-jump projectile go-guru go-mode lua-mode which-key flycheck company yasnippet ivy magit scad-mode counsel-gtags gtags js2-mode rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
+   '(c3po dired dired-preview python-ts dante attrap flymake-hlint flycheck-haskell emacsql-sqlite-module lsp-mode flycheck-rust dumb-jump projectile go-guru go-mode lua-mode which-key flycheck company yasnippet ivy magit scad-mode counsel-gtags gtags js2-mode rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -1305,7 +1305,7 @@ The function wraps a function FN with `ignore-errors' macro."
 
 ;; Load only if exists
 (defun load-if-exists (fname)
-  "Load if exists."
+  "Load FNAME if exists."
  (when (file-exists-p fname)
    (load-file fname)))
 (load-if-exists "~/elisp/pass.el")
@@ -1317,41 +1317,59 @@ The function wraps a function FN with `ignore-errors' macro."
 ;; see https://github.com/emacs-openai/codegpt
 ;; select a region and then M-x codegpt
 (use-package codegpt
-  :ensure t
+  :commands (codegpt)
+  ;; :commands (codegpt codegpt-custom codegpt-doc codegpt-fix codegpt-explain codegpt-improve)
   :config
   ;; For ChatGPT
   ;; (setq codegpt-tunnel 'chat
   ;;       codegpt-model "gpt-3.5-turbo")
   )
-
 ;; see https://github.com/emacs-openai/chatgpt
 ;; 400 error :-(
-(use-package chatgpt :ensure t)
-
+(use-package chatgpt
+  :commands (chatgpt))
 ;; see https://github.com/emacs-openai/dall-e
-(use-package dall-e :ensure t)
+(use-package dall-e
+  :commands (dall-e))
 
 ;; see https://github.com/antonhibl/gptai
-;; gptai-send-query, gptai-send-query-from-selection. gptai-send-query-from-buffer, gptai-spellcheck-text-from-selection, gptai-elaborate-on-text-from-selection
-;; gptai-send-image-query
-;; gptai-code-query, gptai-code-query-from-selection, gptai-explain-code-from-selection, gptai-fix-code-from-selection, gptai-document-code-from-selection, gptai-optimize-code-from-selection ,gptai-improve-code-from-selection
-;;gptai-turbo-query
 (use-package gptai
-  :ensure t
+  :commands (
+             gptai-request
+             gptai-send-query
+             gptai-send-query-region
+             gptai-send-query-buffer
+             gptai-spellcheck-region
+             gptai-elaborate-on-region
+             gptai-code-query-region
+             gptai-code-query
+             gptai-explain-code-region
+             gptai-document-code-region
+             gptai-optimize-code-region
+             gptai-improve-code-region
+             gptai-fix-code-region
+             gptai-send-image-query
+             gptai-list-models)
   :config
  (setq gptai-model "text-davinci-003")
   (setq gptai-username openai-user)
   (setq gptai-api-key openai-key))
 
 ;; see https://github.com/d1egoaz/c3po.el
-;; dev persona: c3po-dev-chat and c3po-reply
-;; explain: c3po-explain-code
-;; writer persona: c3po-chat and c3po-reply
-;; grammar: select region and c3po-correct-grammar+c3po-reply or c3po-correct-grammar-and-replace
-;; rewriting: c3po-rewrite-text, c3po-rewrite-and-replace, and c3po-reply
-;; summarize: c3po-summarize and c3po-reply
+;; Personas: developer, writer, rewriter, corrector, summarize.
 (use-package c3po
   :quelpa (c3po :fetcher url :url "https://raw.githubusercontent.com/d1egoaz/c3po.el/main/c3po.el")
+  :commands (
+             c3po-assistant-new-chat
+             c3po-assistant-new-chat-replace-region
+             c3po-grammar-checker-new-chat
+             c3po-grammar-checker-new-chat-replace-region
+             c3po-developer-new-chat
+             c3po-developer-new-chat-replace-region
+             c3po-rewriter-new-chat
+             c3po-rewriter-new-chat-replace-region
+             c3po-reply
+             c3po-explain-code)
   :config
   (setq c3po-api-key openai-key))
 
@@ -1379,16 +1397,17 @@ The function wraps a function FN with `ignore-errors' macro."
 ;; see https://github.com/xenodium/chatgpt-shell
 ;; chatgpt-shell or dall-e-shell
 (use-package chatgpt-shell
-  :ensure t
+  :commands (chatgpt-shell dall-e-shell)
   :config
   (setq chatgpt-shell-openai-key openai-key))
 
 ;; see https://github.com/karthink/gptel
-;; gptel to start, then C-c Ret for defaults ot C-u C-c Ret for custom.
+;; gptel for dedicated buffer, then C-c Ret for defaults ot C-u C-c Ret for custom.
+;; gptel-send or gptel-menu to operate on a region.
 (use-package gptel
+  :commands (gptel gptel-send gptel-menu gpt-mode)
  :config
  (setq gptel-api-key openai-key))
-
 
 ;; My personalized shortcuts:
 (global-set-key [kp-left] 'backward-sexp)
