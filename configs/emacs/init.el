@@ -36,15 +36,6 @@
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
 
-;; Quelpa adds new ways of downloading packages. Integrate with
-;; use-package with  :quelpa. See https://github.com/quelpa/quelpa-use-package
-(quelpa
- '(quelpa-use-package
-   :fetcher git
-   :url "https://github.com/quelpa/quelpa-use-package.git"))
-(require 'quelpa-use-package)
-
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -80,7 +71,7 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(gptel chatgpt-shell org-ai gptai dall-e chatgpt codegpt treemacs-magit treemacs-icons-dired treemacs-projectile treemacs all-the-icons c3po dired dired-preview python-ts dante attrap flymake-hlint flycheck-haskell emacsql-sqlite-module lsp-mode flycheck-rust dumb-jump projectile go-guru go-mode lua-mode which-key flycheck company yasnippet ivy magit scad-mode counsel-gtags gtags js2-mode rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
+   '(ellama gptel chatgpt-shell org-ai gptai dall-e chatgpt codegpt treemacs-magit treemacs-icons-dired treemacs-projectile treemacs all-the-icons c3po dired dired-preview python-ts dante attrap flymake-hlint flycheck-haskell emacsql-sqlite-module lsp-mode flycheck-rust dumb-jump projectile go-guru go-mode lua-mode which-key flycheck company yasnippet ivy magit scad-mode counsel-gtags gtags js2-mode rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -1311,102 +1302,74 @@ The function wraps a function FN with `ignore-errors' macro."
 (load-if-exists "~/elisp/pass.el")
 (load-if-exists "~/elisp/chri.el")
 
-;; OpenAI interfaces, keys are elsewhere
-
-;; see https://github.com/emacs-openai/codegpt
-;; select a region and then M-x codegpt
-(use-package codegpt
-  :commands (codegpt)
-  ;; :commands (codegpt codegpt-custom codegpt-doc codegpt-fix codegpt-explain codegpt-improve)
-  :config
-  ;; For ChatGPT
-  ;; (setq codegpt-tunnel 'chat
-  ;;       codegpt-model "gpt-3.5-turbo")
-  )
-;; see https://github.com/emacs-openai/chatgpt
-;; 400 error :-(
-(use-package chatgpt
-  :commands (chatgpt))
-;; see https://github.com/emacs-openai/dall-e
-(use-package dall-e
-  :commands (dall-e))
-
-;; see https://github.com/antonhibl/gptai
-(use-package gptai
-  :commands (
-             gptai-request
-             gptai-send-query
-             gptai-send-query-region
-             gptai-send-query-buffer
-             gptai-spellcheck-region
-             gptai-elaborate-on-region
-             gptai-code-query-region
-             gptai-code-query
-             gptai-explain-code-region
-             gptai-document-code-region
-             gptai-optimize-code-region
-             gptai-improve-code-region
-             gptai-fix-code-region
-             gptai-send-image-query
-             gptai-list-models)
-  :config
- (setq gptai-model "text-davinci-003")
-  (setq gptai-username openai-user)
-  (setq gptai-api-key openai-key))
-
-;; see https://github.com/d1egoaz/c3po.el
-;; Personas: developer, writer, rewriter, corrector, summarize.
-(use-package c3po
-  :quelpa (c3po :fetcher url :url "https://raw.githubusercontent.com/d1egoaz/c3po.el/main/c3po.el")
-  :commands (
-             c3po-assistant-new-chat
-             c3po-assistant-new-chat-replace-region
-             c3po-grammar-checker-new-chat
-             c3po-grammar-checker-new-chat-replace-region
-             c3po-developer-new-chat
-             c3po-developer-new-chat-replace-region
-             c3po-rewriter-new-chat
-             c3po-rewriter-new-chat-replace-region
-             c3po-reply
-             c3po-explain-code)
-  :config
-  (setq c3po-api-key openai-key))
-
-;; see https://github.com/rksm/org-ai
-;; in an org buffer:
-;; #+begin_ai
-;; Is Emacs the greatest editor?
-;; #+end_ai
-;; and C-c C-c
-;; #+begin_ai :image :size 256x256
-;; Hyper realistic sci-fi rendering of super complicated technical machine.
-;; #+end_ai
-(use-package org-ai
-  :ensure t
-  :commands (org-ai-mode
-             org-ai-global-mode)
-  :init
-  (add-hook 'org-mode-hook #'org-ai-mode) ; enable org-ai in org-mode
-  (org-ai-global-mode) ; installs global keybindings on C-c M-a
-  :config
-  (setq org-ai-openai-api-token openai-key)
-  ;; if you are on the gpt-4 beta: (setq org-ai-default-chat-model "gpt-4")
-  (org-ai-install-yasnippets)) ;; if you are using yasnippet and want `ai` snippets
-
-;; see https://github.com/xenodium/chatgpt-shell
-;; chatgpt-shell or dall-e-shell
-(use-package chatgpt-shell
-  :commands (chatgpt-shell dall-e-shell)
-  :config
-  (setq chatgpt-shell-openai-key openai-key))
+;; LLM interfaces, keys and IP addresses are elsewhere.
 
 ;; see https://github.com/karthink/gptel
-;; gptel for dedicated buffer, then C-c Ret for defaults ot C-u C-c Ret for custom.
-;; gptel-send or gptel-menu to operate on a region.
 (use-package gptel
-  :commands (gptel gptel-send gptel-menu gpt-mode)
+  :commands (gptel gptel-send gptel-menu gpt-mode gptel-set-topic)
  :config
- (setq gptel-api-key openai-key))
+ (setq gptel-api-key openai-key)
+ (gptel-make-ollama "Ollama"
+  :host (concat ollama-address ":11434")
+  :stream t
+  :models '("zephyr:latest"
+            "mistral:latest"
+            "llama2:70b"
+            "starcoder2:15b")))
+
+;; see https://github.com/s-kostyaev/ellama
+(use-package ellama
+  :init
+  ;; setup key bindings
+  (setopt ellama-keymap-prefix "C-c e")
+  ;; language you want ellama to translate to, default English.
+  ;; (setopt ellama-language "Italian")
+  ;; could be llm-openai for example
+  (require 'llm-ollama)
+  (require 'llm-openai)
+  ;; default provider is zephyr
+  ;; (setopt ellama-provider
+  ;;		    (make-llm-ollama
+  ;;		     ;; this model should be pulled to use it
+  ;;		     ;; value should be the same as you print in terminal during pull
+  ;;		     :chat-model "mistral:7b-instruct-v0.2-q6_K"
+  ;;		     :embedding-model "mistral:7b-instruct-v0.2-q6_K"))
+  ;; Predefined llm providers for interactive switching.
+  ;; You shouldn't add ollama providers here - it can be selected interactively
+  ;; without it. It is just example.
+  (setopt ellama-providers
+		    '(("zephyr" . (make-llm-ollama
+				   :chat-model "zephyr:latest"
+				   :embedding-model "zephyr:latest"))
+		      ("mistral" . (make-llm-ollama
+				    :chat-model "mistral:latest"
+				    :embedding-model "mistral:latest"))
+		      ("starcoder2:15b" . (make-llm-ollama
+				           :chat-model "starcoder2:15b"
+				           :embedding-model "starcoder2:15b"))
+                      ("llama2:70b" . (make-llm-ollama
+				       :chat-model "llama2:70b"
+				       :embedding-model "llama2:70b"))
+                      ("chatgpt4" . (make-llm-openai
+                                     :key openai-key
+				     :chat-model "gpt-4"
+				     :embedding-model "text-embedding-3-large"))
+                      ("chatgpt4turbo" . (make-llm-openai
+                                     :key openai-key
+				     :chat-model "gpt-4-turbo"
+				     :embedding-model "text-embedding-3-large"))))
+  ;; Naming new sessions with llm, default is ellama-provider
+  ;; (setopt ellama-naming-provider
+  ;;	    (make-llm-ollama
+  ;;	     :chat-model "mistral:7b-instruct-v0.2-q6_K"
+  ;;	     :embedding-model "mistral:7b-instruct-v0.2-q6_K"))
+  (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
+  ;; Translation llm provider, default is ellama-provider
+  ;; (setopt ellama-translation-provider (make-llm-ollama
+  ;;					 :chat-model "sskostyaev/openchat:8k"
+  ;;					 :embedding-model "nomic-embed-text"))
+  )                                     ;ellama ends.
+
 
 ;; My personalized shortcuts:
 (global-set-key [kp-left] 'backward-sexp)
