@@ -71,7 +71,7 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(ellama gptel chatgpt-shell org-ai gptai dall-e chatgpt codegpt treemacs-magit treemacs-icons-dired treemacs-projectile treemacs all-the-icons c3po dired dired-preview python-ts dante attrap flymake-hlint flycheck-haskell emacsql-sqlite-module lsp-mode flycheck-rust dumb-jump projectile go-guru go-mode lua-mode which-key flycheck company yasnippet ivy magit scad-mode counsel-gtags gtags js2-mode rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
+   '(csv-mode ellama gptel chatgpt-shell org-ai gptai dall-e chatgpt codegpt treemacs-magit treemacs-icons-dired treemacs-projectile treemacs all-the-icons c3po dired dired-preview python-ts dante attrap flymake-hlint flycheck-haskell emacsql-sqlite-module lsp-mode flycheck-rust dumb-jump projectile go-guru go-mode lua-mode which-key flycheck company yasnippet ivy magit scad-mode counsel-gtags gtags js2-mode rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -1328,42 +1328,49 @@ The function wraps a function FN with `ignore-errors' macro."
   (require 'llm-ollama)
   (require 'llm-openai)
   ;; default provider is zephyr
-  ;; (setopt ellama-provider
-  ;;		    (make-llm-ollama
-  ;;		     ;; this model should be pulled to use it
-  ;;		     ;; value should be the same as you print in terminal during pull
-  ;;		     :chat-model "mistral:7b-instruct-v0.2-q6_K"
-  ;;		     :embedding-model "mistral:7b-instruct-v0.2-q6_K"))
+  (setopt ellama-provider
+  	  (make-llm-ollama
+  	   ;; this model should be pulled to use it
+  	   ;; value should be the same as you print in terminal during pull
+           :host ollama-address
+  	   :chat-model "zephyr:latest"
+  	   :embedding-model "zephyr:latest"))
   ;; Predefined llm providers for interactive switching.
   ;; You shouldn't add ollama providers here - it can be selected interactively
   ;; without it. It is just example.
   (setopt ellama-providers
-		    '(("zephyr" . (make-llm-ollama
-				   :chat-model "zephyr:latest"
-				   :embedding-model "zephyr:latest"))
-		      ("mistral" . (make-llm-ollama
-				    :chat-model "mistral:latest"
-				    :embedding-model "mistral:latest"))
-		      ("starcoder2:15b" . (make-llm-ollama
-				           :chat-model "starcoder2:15b"
-				           :embedding-model "starcoder2:15b"))
-                      ("llama2:70b" . (make-llm-ollama
-				       :chat-model "llama2:70b"
-				       :embedding-model "llama2:70b"))
-                      ("chatgpt4" . (make-llm-openai
-                                     :key openai-key
-				     :chat-model "gpt-4"
-				     :embedding-model "text-embedding-3-large"))
-                      ("chatgpt4turbo" . (make-llm-openai
-                                     :key openai-key
-				     :chat-model "gpt-4-turbo"
-				     :embedding-model "text-embedding-3-large"))))
+	  '(("zephyr" . (make-llm-ollama
+                         :host ollama-address
+			 :chat-model "zephyr:latest"
+			 :embedding-model "zephyr:latest"))
+	    ("mistral" . (make-llm-ollama
+                          :host ollama-address
+			  :chat-model "mistral:latest"
+			  :embedding-model "mistral:latest"))
+	    ("starcoder2:15b" . (make-llm-ollama
+                                 :host ollama-address
+				 :chat-model "starcoder2:15b"
+				 :embedding-model "starcoder2:15b"))
+            ("llama2:70b" . (make-llm-ollama
+                             :host ollama-address
+			     :chat-model "llama2:70b"
+			     :embedding-model "llama2:70b"))
+            ("chatgpt4" . (make-llm-openai
+                           :key openai-key
+			   :chat-model "gpt-4"
+			   :embedding-model "text-embedding-3-large"))
+            ("chatgpt4turbo" . (make-llm-openai
+                                :key openai-key
+				:chat-model "gpt-4-turbo"
+				:embedding-model "text-embedding-3-large"))))
   ;; Naming new sessions with llm, default is ellama-provider
   ;; (setopt ellama-naming-provider
   ;;	    (make-llm-ollama
   ;;	     :chat-model "mistral:7b-instruct-v0.2-q6_K"
   ;;	     :embedding-model "mistral:7b-instruct-v0.2-q6_K"))
-  (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
+  ;; Note that generating name by llm creates very long filenames.
+  ;; (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
+  (setopt ellama-naming-scheme 'ellama-generate-name-by-words)
   ;; Translation llm provider, default is ellama-provider
   ;; (setopt ellama-translation-provider (make-llm-ollama
   ;;					 :chat-model "sskostyaev/openchat:8k"
