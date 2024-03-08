@@ -110,5 +110,10 @@
     (dolist (file files)
       (chri/uncompress-one-file file target))))
 
+(defun chri/generate-buffer ()
+  (interactive)
+  (switch-to-buffer (make-temp-name "scratch")))
+(global-set-key (kbd "s-n") 'chri/generate-buffer)
+
 (provide 'chri)
 ;;; chri.el ends here.
