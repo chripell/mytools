@@ -900,14 +900,20 @@
     :hook coq-mode company-coq-initialize)
 
   ;; Rust
+  (use-package rust-mode
+    :defer t
+    :ensure t
+    :init
+    (setq rust-mode-treesitter-derive t))
   (use-package rustic
     :defer t
     :ensure t
     :after (rust-mode)
     :init
-    (add-hook 'eglot--managed-mode-hook (lambda () (flymake-mode -1)))
-    (setq rustic-lsp-client 'eglot)
-    (setq rust-mode-treesitter-derive t))
+    (add-hook 'eglot--managed-mode-hook (lambda () (flymake-mode -1)
+                                                     (imenu--menubar-select imenu--rescan-item)))
+    (add-hook 'focus-in-hook (lambda () (imenu--menubar-select imenu--rescan-item)))
+    (setq rustic-lsp-client 'eglot))
 
   ;; devicetree mode
   (use-package dts-mode
@@ -1115,7 +1121,7 @@ The function wraps a function FN with `ignore-errors' macro."
          (ediff-suspend . ediff-toggle-wide-display)))
 
 ;; Enable imenu
-(add-hook 'prog-mode-hook 'imenu-add-menubar-index)
+(add-hook 'prog-mode-hook #'imenu-add-menubar-index)
 
 ;; Don't warn about large files.
 (setq large-file-warning-threshold nil)
