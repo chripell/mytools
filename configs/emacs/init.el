@@ -8,7 +8,6 @@
 (defvar chri/proglang)
 (defvar chri/notmuch)
 (defvar chri/projectile-global)
-(defvar chri/ellama-llms)
 (require 'init-mach "~/.emacs.d/init-mach.el")
 
 ;; Initialize package sources.
@@ -72,7 +71,7 @@
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
  '(package-selected-packages
-   '(csv-mode ellama gptel chatgpt-shell org-ai gptai dall-e chatgpt codegpt treemacs-magit treemacs-icons-dired treemacs-projectile treemacs all-the-icons c3po dired dired-preview python-ts dante attrap flymake-hlint flycheck-haskell emacsql-sqlite-module lsp-mode flycheck-rust dumb-jump projectile go-guru go-mode lua-mode which-key flycheck company yasnippet ivy magit scad-mode counsel-gtags gtags js2-mode rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
+   '(guess-language ellama gptel chatgpt-shell org-ai gptai dall-e chatgpt codegpt treemacs-magit treemacs-icons-dired treemacs-projectile treemacs all-the-icons c3po dired dired-preview python-ts dante attrap flymake-hlint flycheck-haskell emacsql-sqlite-module lsp-mode flycheck-rust dumb-jump projectile go-guru go-mode lua-mode which-key flycheck company yasnippet ivy magit scad-mode counsel-gtags gtags js2-mode rainbow-mode rainbow-delimiters rg ag dts-mode ucs-utils font-utils persistent-soft unicode-fonts ivy-yasnippet yasnippet-snippets lsp coq js-mode notmuch coq-mode go-playground javascript-mode diminish yaml-imenu ws-butler which-key-posframe wanderlust use-package typescript-mode tree-mode toml-mode toml smex simpleclip rustic rust-mode proof-general projectile-speedbar menu-bar+ markdown-preview-mode magit-gh-pulls lsp-ui lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode jsonrpc jedi ivy-rich ipython-shell-send iedit ido-completing-read+ haskell-mode go-projectile go-autocomplete ghub+ forge flymake flycheck-yamllint flycheck-pyflakes flycheck-posframe flycheck-ocaml flycheck-mypy flycheck-kotlin flx-ido find-file-in-project elpy elpher ein dash-functional counsel company-posframe company-lua company-lsp company-coq ccls cargo browse-kill-ring+ bpftrace-mode bazel async android-mode))
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -566,6 +565,17 @@
 
 ;; Use aspell for spell checking.
 (setq-default ispell-program-name "aspell")
+;; Guess language
+(use-package guess-language         ; Automatically detect language for Flyspell
+  :ensure t
+  :defer t
+  :init (add-hook 'text-mode-hook #'guess-language-mode)
+  :config
+  (setq guess-language-langcodes '((en . ("en_GB" "English"))
+                                   (it . ("it_IT" "Italian")))
+        guess-language-languages '(en it)
+        guess-language-min-paragraph-length 45)
+  :diminish guess-language-mode)
 
 ;; I am not scarred by narrow to region. ;-)
 (put 'narrow-to-region 'disabled nil)
@@ -892,9 +902,11 @@
   ;; Rust
   (use-package rustic
     :defer t
+    :ensure t
+    :after (rust-mode)
     :init
-    ;; to use rustic-mode even if rust-mode also installed
-    (setq auto-mode-alist (delete '("\\.rs\\'" . rust-mode) auto-mode-alist)))
+    (setq rustic-lsp-client 'eglot)
+    (setq rust-mode-treesitter-derive t))
 
   ;; devicetree mode
   (use-package dts-mode
@@ -1034,21 +1046,6 @@ The function wraps a function FN with `ignore-errors' macro."
 
 ;; org mode.
 (use-package org
-  :defines org-capture-templates org-refile-targets
-  :init
-  (setq org-agenda-files
-	'("~/chripell-org/inbox.org"
-	  "~/chripell-org/tasks.org"
-	  "~/chripell-org/projects.org"))
-  (setq org-capture-templates '(("t" "Todo [inbox]" entry
-				 (file+headline "~/chripell-org/inbox.org" "Tasks")
-				 "* TODO %i%?")
-				("n" "Note" entry
-				 (file "~/chripell-org/notes.org")
-				 "* Entered on %U\n  %i%?")))
-  (setq org-refile-targets '(("~/chripell-org/tasks.org" :maxlevel . 3)
-                             ("~/chripell-org/someday.org" :level . 1)))
-  (setq org-todo-keywords '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)" "CANCELLED(c)")))
   :mode ("\\.org\\'" . org-mode))
 
 ;; notmuch email.
@@ -1316,72 +1313,55 @@ The function wraps a function FN with `ignore-errors' macro."
   :models '("zephyr:latest"
             "mistral:latest"
             "llama2:70b"
-            "starcoder2:15b"))
- (gptel-make-gemini "Gemini" :key "YOUR_GEMINI_API_KEY" :stream t))
+            "starcoder2:15b")))
 
 ;; see https://github.com/s-kostyaev/ellama
 (use-package ellama
   :init
   ;; setup key bindings
-  (setopt ellama-keymap-prefix "s-l")
+  (setopt ellama-keymap-prefix "C-c e")
   ;; language you want ellama to translate to, default English.
   ;; (setopt ellama-language "Italian")
   ;; could be llm-openai for example
   (require 'llm-ollama)
   (require 'llm-openai)
-  (require 'llm-gemini)
-  ;; default provider is zephyr unless chri/ellama-default is defined.
-  (setopt ellama-provider
-          (if (boundp 'chri/ellama-default)
-              chri/ellama-default
-  	    (make-llm-ollama
-  	     ;; this model should be pulled to use it
-  	     ;; value should be the same as you print in terminal during pull
-             :host ollama-address
-  	     :chat-model "zephyr:latest"
-  	     :embedding-model "zephyr:latest")))
+  ;; default provider is zephyr
+  ;; (setopt ellama-provider
+  ;;		    (make-llm-ollama
+  ;;		     ;; this model should be pulled to use it
+  ;;		     ;; value should be the same as you print in terminal during pull
+  ;;		     :chat-model "mistral:7b-instruct-v0.2-q6_K"
+  ;;		     :embedding-model "mistral:7b-instruct-v0.2-q6_K"))
   ;; Predefined llm providers for interactive switching.
   ;; You shouldn't add ollama providers here - it can be selected interactively
   ;; without it. It is just example.
   (setopt ellama-providers
-          (let ((machine-specific (if (boundp 'chri/ellama-llms)
-                                      chri/ellama-llms
-                                    nil)))
-            (append '(("zephyr" . (make-llm-ollama
-                                   :host ollama-address
-			           :chat-model "zephyr:latest"
-			           :embedding-model "zephyr:latest"))
-	              ("mistral" . (make-llm-ollama
-                                    :host ollama-address
-			            :chat-model "mistral:latest"
-			            :embedding-model "mistral:latest"))
-	              ("starcoder2:15b" . (make-llm-ollama
-                                           :host ollama-address
+		    '(("zephyr" . (make-llm-ollama
+				   :chat-model "zephyr:latest"
+				   :embedding-model "zephyr:latest"))
+		      ("mistral" . (make-llm-ollama
+				    :chat-model "mistral:latest"
+				    :embedding-model "mistral:latest"))
+		      ("starcoder2:15b" . (make-llm-ollama
 				           :chat-model "starcoder2:15b"
 				           :embedding-model "starcoder2:15b"))
                       ("llama2:70b" . (make-llm-ollama
-                                       :host ollama-address
-			               :chat-model "llama2:70b"
-			               :embedding-model "llama2:70b"))
-                      ("gemini" . (make-llm-gemini
-                                   :key gemini-key))
+				       :chat-model "llama2:70b"
+				       :embedding-model "llama2:70b"))
                       ("chatgpt4" . (make-llm-openai
                                      :key openai-key
-			             :chat-model "gpt-4"
-			             :embedding-model "text-embedding-3-large"))
+				     :chat-model "gpt-4"
+				     :embedding-model "text-embedding-3-large"))
                       ("chatgpt4turbo" . (make-llm-openai
-                                          :key openai-key
-				          :chat-model "gpt-4-turbo"
-				          :embedding-model "text-embedding-3-large")))
-                    machine-specific)))
+                                     :key openai-key
+				     :chat-model "gpt-4-turbo"
+				     :embedding-model "text-embedding-3-large"))))
   ;; Naming new sessions with llm, default is ellama-provider
   ;; (setopt ellama-naming-provider
   ;;	    (make-llm-ollama
   ;;	     :chat-model "mistral:7b-instruct-v0.2-q6_K"
   ;;	     :embedding-model "mistral:7b-instruct-v0.2-q6_K"))
-  ;; Note that generating name by llm creates very long filenames.
-  ;; (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
-  (setopt ellama-naming-scheme 'ellama-generate-name-by-words)
+  (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
   ;; Translation llm provider, default is ellama-provider
   ;; (setopt ellama-translation-provider (make-llm-ollama
   ;;					 :chat-model "sskostyaev/openchat:8k"
