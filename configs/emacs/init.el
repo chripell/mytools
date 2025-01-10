@@ -905,6 +905,7 @@
     :ensure t
     :after (rust-mode)
     :init
+    (add-hook 'eglot--managed-mode-hook (lambda () (flymake-mode -1)))
     (setq rustic-lsp-client 'eglot)
     (setq rust-mode-treesitter-derive t))
 
