@@ -110,10 +110,31 @@
     (dolist (file files)
       (chri/uncompress-one-file file target))))
 
+;; See https://emacs.stackexchange.com/questions/12704/swap-default-behavior-of-command-with-c-u-behavior
+(defun chri/swap-args (fun)
+  "Swap default behavior of FUN with prefix behavior."
+  (if (not (equal (interactive-form fun)
+                  '(interactive "P")))
+      (error "Unexpected")
+    (advice-add
+     fun
+     :around
+     (lambda (x &rest args)
+       "Swap the meaning the universal prefix argument"
+       (if (called-interactively-p 'any)
+           (apply x (cons (not (car args)) (cdr args)))
+         (apply x args))))))
+
+;; See https://emacs.stackexchange.com/questions/36850/copy-to-kill-ring-selected-file-names-full-path
+(defun chri/dired-copy-path-at-point ()
+  "Use the full path by default."
+    (interactive)
+    (dired-copy-filename-as-kill 0))
+
 (defun chri/generate-buffer ()
+  "Create and switch to a scratch buffer."
   (interactive)
   (switch-to-buffer (make-temp-name "scratch")))
-(global-set-key (kbd "s-n") 'chri/generate-buffer)
 
 (provide 'chri)
 ;;; chri.el ends here.
