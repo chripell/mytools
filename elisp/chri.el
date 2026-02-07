@@ -14,6 +14,11 @@
   :type 'string
   :group 'chri)
 
+(defcustom chri/ig-square "/home/chri/.local/bin/ig_square.py"
+  "Path to ig_square.py executable."
+  :type 'string
+  :group 'chri)
+
 (defun chri/ig-get-next-dir ()
   "Get next directory to use for IG photos."
   (let ((max-num 0)
@@ -32,7 +37,7 @@
     (dolist (f files)
       (copy-file f dest))
     (let ((default-directory dest))
-      (shell-command "ig_square.py *.jpg"))
+      (shell-command (concat chri/ig-square " *.jpg")))
     (dolist (f files)
       (delete-file (concat dest (file-name-nondirectory f))))))
 

@@ -73,36 +73,7 @@
  '(magit-auto-revert-mode t)
  '(mouse-yank-at-point t)
  '(org-startup-folded nil)
- '(package-selected-packages
-   '(guess-language ellama gptel chatgpt-shell org-ai gptai dall-e
-                    chatgpt codegpt treemacs-magit
-                    treemacs-icons-dired treemacs-projectile treemacs
-                    all-the-icons c3po dired dired-preview python-ts
-                    dante attrap flymake-hlint flycheck-haskell
-                    emacsql-sqlite-module lsp-mode flycheck-rust
-                    dumb-jump projectile go-guru go-mode lua-mode
-                    which-key flycheck company yasnippet ivy magit
-                    scad-mode counsel-gtags gtags js2-mode
-                    rainbow-mode rainbow-delimiters rg ag dts-mode
-                    ucs-utils font-utils persistent-soft unicode-fonts
-                    ivy-yasnippet yasnippet-snippets lsp coq js-mode
-                    notmuch coq-mode go-playground javascript-mode
-                    diminish yaml-imenu ws-butler which-key-posframe
-                    wanderlust use-package typescript-mode tree-mode
-                    toml-mode toml smex simpleclip rustic rust-mode
-                    proof-general projectile-speedbar menu-bar+
-                    markdown-preview-mode magit-gh-pulls lsp-ui
-                    lsp-pyright lsp-jedi lsp-ivy lsp-dart kotlin-mode
-                    jsonrpc jedi ivy-rich ipython-shell-send iedit
-                    ido-completing-read+ haskell-mode go-projectile
-                    go-autocomplete ghub+ forge flymake
-                    flycheck-yamllint flycheck-pyflakes
-                    flycheck-posframe flycheck-ocaml flycheck-mypy
-                    flycheck-kotlin flx-ido find-file-in-project elpy
-                    elpher ein dash-functional counsel
-                    company-posframe company-lua company-lsp
-                    company-coq ccls cargo browse-kill-ring+
-                    bpftrace-mode bazel async android-mode))
+ '(package-selected-packages nil)
  '(projectile-tags-command "make_TAGS \"%s\" %s")
  '(rustic-display-spinner nil)
  '(rustic-format-trigger 'on-save)
@@ -1628,70 +1599,56 @@ The function wraps a function FN with `ignore-errors' macro."
 
 ;; see https://github.com/karthink/gptel
 (use-package gptel
-  :commands (gptel gptel-send gptel-menu gpt-mode gptel-set-topic)
- :config
- (setq gptel-api-key openai-key)
- (gptel-make-ollama "Ollama"
-  :host (concat ollama-address ":11434")
-  :stream t
-  :models '("zephyr:latest"
-            "mistral:latest"
-            "llama2:70b"
-            "starcoder2:15b")))
+ ;; :commands (gptel gptel-send gptel-menu gpt-mode gptel-set-topic)
+  :config
+  ;; OPTIONAL configuration
+  (setq
+   gptel-model 'gemini-flash-latest
+   gptel-backend (gptel-make-gemini "Gemini"
+                   :key chri/gemini-key
+                   :stream t))
+ ;; (setq gptel-api-key openai-key)
+ ;; (gptel-make-ollama "Ollama"
+ ;;  :host (concat ollama-address ":11434")
+ ;;  :stream t
+ ;;  :models '("zephyr:latest"
+ ;;            "mistral:latest"
+ ;;            "llama2:70b"
+ ;;            "starcoder2:15b"))
+ )
 
 ;; see https://github.com/s-kostyaev/ellama
 (use-package ellama
+  :ensure t
+  :bind ("C-c e" . ellama)
+  ;; send last message in chat buffer with C-c C-c
+  :hook (org-ctrl-c-ctrl-c-final . ellama-chat-send-last-message)
   :init
-  ;; setup key bindings
-  (setopt ellama-keymap-prefix "C-c e")
-  ;; language you want ellama to translate to, default English.
-  ;; (setopt ellama-language "Italian")
-  ;; could be llm-openai for example
-  (require 'llm-ollama)
-  (require 'llm-openai)
-  ;; default provider is zephyr
-  ;; (setopt ellama-provider
-  ;;		    (make-llm-ollama
-  ;;		     ;; this model should be pulled to use it
-  ;;		     ;; value should be the same as you print in terminal during pull
-  ;;		     :chat-model "mistral:7b-instruct-v0.2-q6_K"
-  ;;		     :embedding-model "mistral:7b-instruct-v0.2-q6_K"))
-  ;; Predefined llm providers for interactive switching.
-  ;; You shouldn't add ollama providers here - it can be selected interactively
-  ;; without it. It is just example.
-  (setopt ellama-providers
-		    '(("zephyr" . (make-llm-ollama
-				   :chat-model "zephyr:latest"
-				   :embedding-model "zephyr:latest"))
-		      ("mistral" . (make-llm-ollama
-				    :chat-model "mistral:latest"
-				    :embedding-model "mistral:latest"))
-		      ("starcoder2:15b" . (make-llm-ollama
-				           :chat-model "starcoder2:15b"
-				           :embedding-model "starcoder2:15b"))
-                      ("llama2:70b" . (make-llm-ollama
-				       :chat-model "llama2:70b"
-				       :embedding-model "llama2:70b"))
-                      ("chatgpt4" . (make-llm-openai
-                                     :key openai-key
-				     :chat-model "gpt-4"
-				     :embedding-model "text-embedding-3-large"))
-                      ("chatgpt4turbo" . (make-llm-openai
-                                     :key openai-key
-				     :chat-model "gpt-4-turbo"
-				     :embedding-model "text-embedding-3-large"))))
-  ;; Naming new sessions with llm, default is ellama-provider
-  ;; (setopt ellama-naming-provider
-  ;;	    (make-llm-ollama
-  ;;	     :chat-model "mistral:7b-instruct-v0.2-q6_K"
-  ;;	     :embedding-model "mistral:7b-instruct-v0.2-q6_K"))
-  (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
-  ;; Translation llm provider, default is ellama-provider
-  ;; (setopt ellama-translation-provider (make-llm-ollama
-  ;;					 :chat-model "sskostyaev/openchat:8k"
-  ;;					 :embedding-model "nomic-embed-text"))
-  )                                     ;ellama ends.
+  (setopt ellama-auto-scroll t)
+  (require 'llm-gemini)
+  (setopt ellama-provider
+  	  (make-llm-gemini
+  	   ;; this model should be pulled to use it
+  	   ;; value should be the same as you print in terminal during pull
+           :key chri/gemini-key
+  	   :chat-model "gemini-flash-latest"))
+  :config
+  ;; show ellama context in header line in all buffers
+  ;; (ellama-context-header-line-global-mode +1)
+  ;; show ellama session id in header line in all buffers
+  ;; (ellama-session-header-line-global-mode +1)
+  )
 
+;; see https://github.com/xenodium/agent-shell
+(use-package agent-shell
+  :ensure t
+  :config
+  ;; (setq agent-shell-preferred-agent-config (agent-shell-google-make-gemini-config))
+  )
+
+;; vterm is useful for gemini-cli
+(use-package vterm
+    :ensure t)
 
 ;; My personalized shortcuts:
 (global-set-key [kp-left] 'backward-sexp)
