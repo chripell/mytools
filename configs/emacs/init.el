@@ -973,7 +973,7 @@
   ([f9] . yas-expand)
   ([C-f9] . yas-describe-tables)
   :config
-  (add-to-list 'yas-snippet-dirs "~/git/yasnippet-snippets/snippets")
+  ;; (add-to-list 'yas-snippet-dirs "~/git/yasnippet-snippets/snippets")
   (yas-global-mode 1)
   (define-key yas-minor-mode-map [(tab)] nil)
   (define-key yas-minor-mode-map (kbd "TAB") nil))
@@ -1129,6 +1129,8 @@
 
 
   ;; Python mode.
+  (setenv "WORKON_HOME" "/home/chri/miniconda3/envs")
+  (pyvenv-mode 1)
   (use-package python
     :mode
     ("\\.py\\'" . python-mode)
