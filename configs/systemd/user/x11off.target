@@ -1,5 +1,0 @@
-[Unit]
-Description=X11 is off
-Requires=default.target
-Conflicts=x11on.target
-After=default.target
